@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+*[data-tauri-drag-region] {
+  user-select: none;
+  app-region: drag;
+}
+
+@theme {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+@layer base {
+  body {
+    @apply bg-black text-white;
+  }
+}

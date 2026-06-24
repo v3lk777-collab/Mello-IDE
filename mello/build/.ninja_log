@@ -1,0 +1,21 @@
+# ninja log v6
+5	397	8037883111619143	build.ninja	8a35ee37f2ffc868
+47	7075	8037851831949255	CMakeFiles/mello.dir/src/parser.cpp.obj	13b2ba0beb34a675
+6751	7730	8037863775099315	mello.exe	a4f83875f3d816c1
+75	6749	8037863708436176	CMakeFiles/mello.dir/src/main.cpp.obj	e0b5951d72cb6a00
+83	6473	8037851449595657	CMakeFiles/mello.dir/src/lexer.cpp.obj	d4a97de67e022349
+81	4476	8037883117759182	CMakeFiles/mello.dir/src/lexer.cpp.obj	d4a97de67e022349
+71	8226	8037883117639177	CMakeFiles/mello.dir/src/main.cpp.obj	e0b5951d72cb6a00
+92	9456	8037883117959189	CMakeFiles/mello.dir/src/parser.cpp.obj	13b2ba0beb34a675
+9457	10321	8037883211489177	mello.exe	a4f83875f3d816c1
+137	10915	8038414790475703	CMakeFiles/mello.dir/src/main.cpp.obj	e0b5951d72cb6a00
+155	11403	8038414790655701	CMakeFiles/mello.dir/src/parser.cpp.obj	13b2ba0beb34a675
+11405	12409	8038414903101104	mello.exe	a4f83875f3d816c1
+42	5834	8038415685520878	CMakeFiles/mello.dir/src/main.cpp.obj	e0b5951d72cb6a00
+50	7283	8038415685610908	CMakeFiles/mello.dir/src/parser.cpp.obj	13b2ba0beb34a675
+7285	8037	8038415757961760	mello.exe	a4f83875f3d816c1
+46	6763	8038428036754251	CMakeFiles/mello.dir/src/main.cpp.obj	e0b5951d72cb6a00
+55	8346	8038428036844229	CMakeFiles/mello.dir/src/parser.cpp.obj	13b2ba0beb34a675
+8349	9112	8038428119774242	mello.exe	a4f83875f3d816c1
+243	11028	8038520913643119	CMakeFiles/mello.dir/src/main.cpp.obj	e0b5951d72cb6a00
+11030	12212	8038521021561899	mello.exe	a4f83875f3d816c1
