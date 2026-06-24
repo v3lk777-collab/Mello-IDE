@@ -1,3 +1,6 @@
 # Mello IDE
 
-# Nothing
+oh btw run
+```bush
+npm install
+```
