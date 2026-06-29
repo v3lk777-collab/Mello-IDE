@@ -123,7 +123,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
 
             {activeItem && (
                 <div
-                    className="w-64 bg-neutral-900 border-r border-white/5 p-4 animate-in slide-in-from-left duration-300 flex flex-col"
+                    className="w-64 bg-black border-r border-white/5 p-4 animate-in slide-in-from-left duration-300 flex flex-col"
                     style={{
                         width: activeItem ? "256px" : "0px",
                         opacity: activeItem ? 1 : 0,

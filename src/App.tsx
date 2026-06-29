@@ -145,7 +145,7 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-gradient-to-br from-neutral-950 via-neutral-900 to-purple-950/50 text-neutral-200 overflow-hidden">
+    <div className="flex flex-col h-screen w-scree overflow-hidden">
       <Titlebar
         onVerify={handleVerify}
         onUpload={handleUpload}

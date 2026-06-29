@@ -76,7 +76,7 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
   return (
     <div 
       data-tauri-drag-region 
-      className="h-9 w-full bg-neutral-900/70 backdrop-blur-md border-b border-white/10 flex items-center justify-between select-none pl-4 pr-2"
+      className="h-9 w-full bg-black backdrop-blur-md border-b border-white/10 flex items-center justify-between select-none pl-4 pr-2"
     >
       <div className="flex items-center gap-2">
         <span
