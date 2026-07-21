@@ -1,5 +1,20 @@
 use serde::Serialize;
+use std::path::PathBuf;
 use std::process::Command;
+use tauri::path::BaseDirectory;
+use tauri::{AppHandle, Manager};
+
+fn resolve_compiler_path(app: &AppHandle) -> Result<PathBuf, String> {
+    let binary_name = if cfg!(target_os = "windows") {
+        "mello.exe"
+    } else {
+        "mello"
+    };
+
+    app.path()
+        .resolve(format!("mello/{binary_name}"), BaseDirectory::Resource)
+        .map_err(|e| e.to_string())
+}
 
 #[derive(Serialize)]
 pub struct CompileResult {
@@ -8,10 +23,14 @@ pub struct CompileResult {
     error: String,
 }
 
-fn run_mello(source_path: &str, upload: bool) -> Result<CompileResult, String> {
-    let compiler_path = "../bin/mello_compiler";
+fn run_mello(app: &AppHandle, source_path: &str, upload: bool) -> Result<CompileResult, String> {
+    let compiler_path = resolve_compiler_path(app)?;
+    let compiler_dir = compiler_path
+        .parent()
+        .ok_or("Could not determine compiler directory")?;
 
-    let mut cmd = Command::new(compiler_path);
+    let mut cmd = Command::new(&compiler_path);
+    cmd.current_dir(compiler_dir);
     cmd.arg(source_path);
 
     if upload {
@@ -28,11 +47,11 @@ fn run_mello(source_path: &str, upload: bool) -> Result<CompileResult, String> {
 }
 
 #[tauri::command]
-pub fn verify_code(source_path: String) -> Result<CompileResult, String> {
-    run_mello(&source_path, false)
+pub fn verify_code(app: AppHandle, source_path: String) -> Result<CompileResult, String> {
+    run_mello(&app, &source_path, false)
 }
 
 #[tauri::command]
-pub fn upload_code(source_path: String) -> Result<CompileResult, String> {
-    run_mello(&source_path, true)
+pub fn upload_code(app: AppHandle, source_path: String) -> Result<CompileResult, String> {
+    run_mello(&app, &source_path, true)
 }

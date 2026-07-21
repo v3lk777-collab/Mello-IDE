@@ -1,5 +1,7 @@
-use crate::state::SerialState;
+use crate::state::{OpenSerial, SerialState};
 use std::io::{Read, Write};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 use std::time::Duration;
 use tauri::{AppHandle, Emitter, State};
 
@@ -22,12 +24,24 @@ pub fn open_serial(
         .map_err(|e| e.to_string())?;
 
     let mut reader = serial.try_clone().map_err(|e| e.to_string())?;
+    let stop_reader = Arc::new(AtomicBool::new(false));
+    let stop_reader_thread = stop_reader.clone();
 
-    *state.0.lock().map_err(|e| e.to_string())? = Some(serial);
+    {
+        let mut guard = state.0.lock().map_err(|e| e.to_string())?;
+        if let Some(previous) = guard.take() {
+            previous.stop_reader.store(true, Ordering::Relaxed);
+        }
+        *guard = Some(OpenSerial { port: serial, stop_reader });
+    }
 
     std::thread::spawn(move || {
         let mut buf = [0u8; 256];
         loop {
+            if stop_reader_thread.load(Ordering::Relaxed) {
+                break;
+            }
+
             match reader.read(&mut buf) {
                 Ok(n) if n > 0 => {
                     let data = String::from_utf8_lossy(&buf[..n]).to_string();
@@ -47,15 +61,18 @@ pub fn open_serial(
 
 #[tauri::command]
 pub fn close_serial(state: State<SerialState>) -> Result<(), String> {
-    *state.0.lock().map_err(|e| e.to_string())? = None;
+    let mut guard = state.0.lock().map_err(|e| e.to_string())?;
+    if let Some(previous) = guard.take() {
+        previous.stop_reader.store(true, Ordering::Relaxed);
+    }
     Ok(())
 }
 
 #[tauri::command]
 pub fn send_serial(message: String, state: State<SerialState>) -> Result<(), String> {
     let mut guard = state.0.lock().map_err(|e| e.to_string())?;
-    if let Some(serial) = guard.as_mut() {
-        serial.write_all(message.as_bytes()).map_err(|e| e.to_string())?;
+    if let Some(open) = guard.as_mut() {
+        open.port.write_all(message.as_bytes()).map_err(|e| e.to_string())?;
         Ok(())
     } else {
         Err("Serial port not open".into())

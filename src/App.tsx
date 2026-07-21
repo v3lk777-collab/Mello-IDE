@@ -4,7 +4,6 @@ import Sidebar from "./components/Sidebar";
 import Terminal from "./components/Terminal";
 import Titlebar from "./components/Titlebar";
 import { invoke } from "@tauri-apps/api/core";
-import { open } from "@tauri-apps/plugin-dialog";
 import CodeEditor from "./components/CodeEditor";
 import SerialMonitor from "./components/SerialMonitor";
 
@@ -16,8 +15,6 @@ interface CompileResult {
 
 function App() {
   const [code, setCode] = useState<string>("");
-
-  const [folderFiles, setFolderFiles] = useState<any[]>([]);
   const [currentFilePath, setCurrentFilePath] = useState<string>("");
 
   const [fontSize, setFontSize] = useState<number>(18);
@@ -30,24 +27,9 @@ function App() {
 
   const [currentTab, setCurrentTab] = useState<string>("");
 
-  const handleFolderOpen = async () => {
-    try {
-      const selectedFolder = await open({
-        directory: true,
-        multiple: false,
-      });
-
-      if (selectedFolder) {
-        console.log("Selected Folder Path:", selectedFolder);
-        
-        await invoke("initialize_project", { path: selectedFolder });
-        
-        const files = await invoke<any[]>("get_directory_files");
-        setFolderFiles(files);
-      }
-    } catch (error) {
-      console.error("Failed to open directory:", error);
-    }
+  const onFolderOpen = (_path: string) => {
+    setCode("");
+    setCurrentFilePath("");
   };
 
   const onFileClick = async (path: string) => {
@@ -95,7 +77,7 @@ function App() {
 
       <div className="flex flex-1 w-full overflow-hidden">
         <Sidebar
-          onFolderOpen={handleFolderOpen}
+          onFolderOpen={onFolderOpen}
           onFileClick={onFileClick}
           onFontFamilyChange={setFontFamily}
           onFontSizeChange={setFontSize}
@@ -107,13 +89,19 @@ function App() {
 
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="flex-1 overflow-hidden relative">
-            <CodeEditor
-              code={code}
-              onChange={setCode}
-              fontFamily={fontFamily}
-              fontSize={fontSize}
-              lineHeight={lineHeight}
-            />
+            {currentFilePath ? (
+              <CodeEditor
+                code={code}
+                onChange={setCode}
+                fontFamily={fontFamily}
+                fontSize={fontSize}
+                lineHeight={lineHeight}
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-neutral-600 text-sm">
+                Open a folder and select a file to start editing
+              </div>
+            )}
           </div>
 
           {currentTab == "terminal" &&

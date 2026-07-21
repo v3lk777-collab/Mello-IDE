@@ -1,13 +1,35 @@
+use crate::state::ProjectState;
 use serde::Serialize;
 use std::fs;
+use std::path::Path;
 use tauri::State;
-use crate::state::ProjectState;
 
 #[derive(Serialize, Clone)]
 pub struct FileItem {
     name: String,
     path: String,
     is_dir: bool,
+}
+
+fn ensure_within_project(path: &str, state: &ProjectState) -> Result<(), String> {
+    let guard = state.0.lock().map_err(|e| e.to_string())?;
+
+    if let Some(root) = guard.as_ref() {
+        let candidate = Path::new(path);
+
+        let canonical_candidate = candidate
+            .canonicalize()
+            .map_err(|_| "Path does not exist".to_string())?;
+        let canonical_root = root
+            .canonicalize()
+            .map_err(|_| "Project root does not exist".to_string())?;
+
+        if !canonical_candidate.starts_with(&canonical_root) {
+            return Err("Path is outside the open project folder".into());
+        }
+    }
+
+    Ok(())
 }
 
 #[tauri::command]
@@ -21,7 +43,9 @@ pub fn initialize_project(path: String, state: State<ProjectState>) -> Result<()
 }
 
 #[tauri::command]
-pub fn get_directory_files(path: String) -> Result<Vec<FileItem>, String> {
+pub fn get_directory_files(path: String, state: State<ProjectState>) -> Result<Vec<FileItem>, String> {
+    ensure_within_project(&path, &state)?;
+
     let entries = fs::read_dir(&path).map_err(|e| e.to_string())?;
     let mut items = Vec::new();
 
@@ -47,11 +71,13 @@ pub fn get_directory_files(path: String) -> Result<Vec<FileItem>, String> {
 }
 
 #[tauri::command]
-pub fn read_file_content(path: String) -> Result<String, String> {
+pub fn read_file_content(path: String, state: State<ProjectState>) -> Result<String, String> {
+    ensure_within_project(&path, &state)?;
     fs::read_to_string(&path).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
-pub fn save_file_content(path: String, content: String) -> Result<(), String> {
+pub fn save_file_content(path: String, content: String, state: State<ProjectState>) -> Result<(), String> {
+    ensure_within_project(&path, &state)?;
     fs::write(&path, content).map_err(|e| e.to_string())
 }

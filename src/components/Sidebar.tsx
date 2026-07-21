@@ -87,7 +87,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
 
         return (
             <div className="space-y-0.5">
-                {files.map((file) => (
+                {displayedFiles.map((file) => (
                     <FileNode key={file.path} file={file} onFileClick={onFileClick} />
                 ))}
             </div>
