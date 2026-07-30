@@ -19,15 +19,18 @@ function CodeEditor({ code, onChange, fontSize, lineHeight, fontFamily } : CodeE
                     monaco.languages.register({ id: 'mello' });
 
                     monaco.languages.setMonarchTokensProvider('mello', {
-                        keywords_def:     ['start', 'loop', 'func', 'use'],
-                        keywords_control: ['if', 'elif', 'else', 'return', 'every', 'while', 'for', 'repeat', 'or', 'and'],
+                        keywords_def:     ['start', 'loop', 'func'],
+                        keywords_control: [
+                            'if', 'elif', 'else', 'return', 'every', 'while', 'for', 'repeat',
+                            'or', 'and', 'not', 'in', 'range', 'break', 'continue'
+                        ],
                         keywords_io:      [
                             'turn_on', 'turn_off', 'toggle', 'wait', 'write', 'read', 'serial.start', 'serial.print', 'serial.println',
                             'scale', 'serial.read', 'serial.available', 'on_press', 'serial.availableForWrite', 'serial.end',
                             'serial.find', 'serial.findUntil', 'serial.waitUntilSend', 'serial.parseFloat', 'serial.parseInt',
-                            'serial.peek'
+                            'serial.peek', 'len', 'sleep'
                         ],
-                        
+
                         tokenizer: {
                             root: [
                                 [/[a-z_$][\w$]*(\.[\w$]+)?/, {
@@ -38,7 +41,7 @@ function CodeEditor({ code, onChange, fontSize, lineHeight, fontFamily } : CodeE
                                         '@default':          'variable'
                                     }
                                 }],
-                                
+
                                 [/[A-Z][\w$]*/,                 'type.name'],
                                 [/\d+\.\d+/,                    'number.float'],
                                 [/\d+/,                         'number.int'],
@@ -65,27 +68,32 @@ function CodeEditor({ code, onChange, fontSize, lineHeight, fontFamily } : CodeE
                                 { label: 'func', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'func ${1:name}():\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'start', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'start:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'loop', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'loop:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
-                                { label: 'use', kind: monaco.languages.CompletionItemKind.Module, insertText: 'use ${1:library}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
 
                                 { label: 'if', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'if ${1:condition}:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'elif', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'elif ${1:condition}:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'else', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'else:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'while', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'while ${1:condition}:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
-                                { label: 'for', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'for ${1:item} in ${2:iterable}:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'for (condition)', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'for ${1:i} < ${2:10}:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'for (range)', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'for ${1:i} in range(${2:10}):\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'repeat', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'repeat ${1:times}:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
-                                { label: 'every', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'every ${1:ms}:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'every', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'every ${1:1s}:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'return', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'return ${0:value}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'break', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'break', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'continue', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'continue', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'or', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'or', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'and', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'and', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'not', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'not', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
 
                                 { label: 'turn_on', kind: monaco.languages.CompletionItemKind.Function, insertText: 'turn_on(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'turn_off', kind: monaco.languages.CompletionItemKind.Function, insertText: 'turn_off(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'toggle', kind: monaco.languages.CompletionItemKind.Function, insertText: 'toggle(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
-                                { label: 'wait', kind: monaco.languages.CompletionItemKind.Function, insertText: 'wait(${1:ms})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'wait', kind: monaco.languages.CompletionItemKind.Function, insertText: 'wait(${1:1s})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'write', kind: monaco.languages.CompletionItemKind.Function, insertText: 'write(${1:pin}, ${2:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'read', kind: monaco.languages.CompletionItemKind.Function, insertText: 'read(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'scale', kind: monaco.languages.CompletionItemKind.Function, insertText: 'scale(${1:value}, ${2:fromLow}, ${3:fromHigh}, ${4:toLow}, ${5:toHigh})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
-                                { label: 'on_press', kind: monaco.languages.CompletionItemKind.Function, insertText: 'on_press(${1:pin}):\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'on_press', kind: monaco.languages.CompletionItemKind.Function, insertText: 'on_press ${1:pin}:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'sleep', kind: monaco.languages.CompletionItemKind.Function, insertText: 'sleep(${1|idle,adc,deep|})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'len', kind: monaco.languages.CompletionItemKind.Function, insertText: 'len(${1:array})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
 
                                 { label: 'serial.start', kind: monaco.languages.CompletionItemKind.Function, insertText: 'serial.start(${1:9600})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'serial.print', kind: monaco.languages.CompletionItemKind.Function, insertText: 'serial.print(${1:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
