@@ -12,7 +12,7 @@ fn resolve_compiler_path(app: &AppHandle) -> Result<PathBuf, String> {
     };
 
     app.path()
-        .resolve(format!("mello/{binary_name}"), BaseDirectory::Resource)
+        .resolve(format!("mello/build/{binary_name}"), BaseDirectory::Resource)
         .map_err(|e| e.to_string())
 }
 
@@ -47,11 +47,19 @@ fn run_mello(app: &AppHandle, source_path: &str, upload: bool) -> Result<Compile
 }
 
 #[tauri::command]
-pub fn verify_code(app: AppHandle, source_path: String) -> Result<CompileResult, String> {
-    run_mello(&app, &source_path, false)
+pub async fn verify_code(app: AppHandle, source_path: String) -> Result<CompileResult, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        run_mello(&app, &source_path, false)
+    })
+    .await
+    .map_err(|e| e.to_string())?
 }
 
 #[tauri::command]
-pub fn upload_code(app: AppHandle, source_path: String) -> Result<CompileResult, String> {
-    run_mello(&app, &source_path, true)
+pub async fn upload_code(app: AppHandle, source_path: String) -> Result<CompileResult, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        run_mello(&app, &source_path, true)
+    })
+    .await
+    .map_err(|e| e.to_string())?
 }
