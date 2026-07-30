@@ -97,16 +97,11 @@ npm run tauri build
 ## Mello Language Quick Example
 
 ```
-start:
-    serial.start(9600)
+pin = 13
 
 loop:
-    on_press(2):
-        toggle(13)
-        serial.println("Button pressed")
-
-    every 1000:
-        write(9, scale(read(A0), 0, 1023, 0, 255))
+    toggle(pin)
+    wait(1s)
 ```
 
 Mello source compiles down to native Arduino C++ (`-O3 -flto`, targeting `arduino:avr:uno` by default) with no interpreter or runtime layer.

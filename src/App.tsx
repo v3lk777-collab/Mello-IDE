@@ -17,8 +17,8 @@ function App() {
   const [code, setCode] = useState<string>("");
   const [currentFilePath, setCurrentFilePath] = useState<string>("");
 
-  const [fontSize, setFontSize] = useState<number>(18);
-  const [lineHeight, setLineHeight] = useState<number>(23);
+  const [fontSize, setFontSize] = useState<number>(15);
+  const [lineHeight, setLineHeight] = useState<number>(22);
   const [fontFamily, setFontFamily] = useState<string>("'Cascadia Code', monospace");
 
   const [terminalActive, setTerminalActive] = useState<boolean>(false);
