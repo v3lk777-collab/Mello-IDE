@@ -9,7 +9,7 @@ Built with **Tauri**, **Rust**, and **React + TypeScript**.
 ## Features
 
 - **Monaco-based code editor** with a custom Mello language definition (`melloKids` theme):
-  - Syntax highlighting for definitions (`start`, `loop`, `func`, `use`), control flow (`if`, `elif`, `else`, `while`, `for`, `repeat`, `every`, `return`, `or`, `and`), and I/O calls (`turn_on`, `turn_off`, `toggle`, `wait`, `write`, `read`, `scale`, `on_press`, and the `serial.*` family)
+  - Syntax highlighting for definitions (`start`, `loop`, `func`), control flow (`if`, `elif`, `else`, `while`, `for`, `repeat`, `every`, `return`, `or`, `and`, `not`, `in`, `range`, `break`, `continue`), and I/O calls (`turn_on`, `turn_off`, `toggle`, `wait`, `write`, `read`, `scale`, `on_press`, `len`, `sleep`, and the `serial.*` family)
   - Autocomplete / snippet suggestions for all language keywords and built-in functions
   - Adjustable font size, font family (JetBrains Mono, Fira Code, Cascadia Code), and line height
 - **Project explorer** — open a folder, browse nested directories, open/save files
@@ -32,7 +32,7 @@ Built with **Tauri**, **Rust**, and **React + TypeScript**.
 - Rust + Tauri
 - `serialport` crate for serial communication
 - `serde` for serialization
-- Shell execution of an external Mello compiler binary
+- The Mello compiler binary, bundled as a Tauri resource and invoked as a subprocess
 
 ## Project Structure
 
@@ -55,7 +55,7 @@ mello-ide/
     │   ├── state.rs             # SerialState, ProjectState
     │   └── commands/
     │       ├── fs.rs            # initialize_project, get_directory_files, read/save file
-    │       ├── compiler.rs      # verify_code, upload_code (shells out to mello_compiler)
+    │       ├── compiler.rs      # verify_code, upload_code (shells out to the Mello compiler)
     │       └── serial.rs        # list_ports, open/close_serial, send_serial
     └── ...
 ```
@@ -79,7 +79,7 @@ mello-ide/
 
 - [Node.js](https://nodejs.org/) and a package manager (npm/pnpm/yarn)
 - [Rust](https://www.rust-lang.org/tools/install) and the [Tauri CLI](https://tauri.app/start/prerequisites/)
-- A Mello compiler binary available at `../bin/mello_compiler` relative to the Tauri backend (used by `verify_code` / `upload_code`)
+- The Mello compiler binary and its bundled tools (`arduino-cli`, `clang-format`), packaged under `src-tauri/resources` and resolved at runtime via Tauri's resource directory — no manual path setup needed
 
 ## Getting Started
 
@@ -114,4 +114,4 @@ Mello Programming Language and the Mello IDE are original works developed for sc
 - **Restrictions:** unauthorized use of this source code in any academic competition (e.g., ISEF, science fairs), research submission, or commercial product is **strictly prohibited** without prior written consent from the author.
 - **Attribution:** if you find this project useful for learning, please attribute the work to the original author, Mohammed Tamer Mohammed Ahmed El-Azab.
 
-*Interested in collaborating or seeking permission for specific use? Please reach out directly (v3lk777@gmail.com).* 
+*Interested in collaborating or seeking permission for specific use? Please reach out directly (v3lk777@gmail.com).*
