@@ -4,6 +4,9 @@ use std::process::Command;
 use tauri::path::BaseDirectory;
 use tauri::{AppHandle, Manager};
 
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
+
 fn resolve_compiler_path(app: &AppHandle) -> Result<PathBuf, String> {
     let binary_name = if cfg!(target_os = "windows") {
         "mello.exe"
@@ -36,6 +39,9 @@ fn run_mello(app: &AppHandle, source_path: &str, upload: bool) -> Result<Compile
     if upload {
         cmd.arg("--upload");
     }
+
+    #[cfg(target_os = "windows")]
+    cmd.creation_flags(0x08000000);
 
     let output = cmd.output().map_err(|e| e.to_string())?;
 
