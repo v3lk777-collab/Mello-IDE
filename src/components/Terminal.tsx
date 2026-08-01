@@ -1,5 +1,5 @@
-import { TerminalIcon, ListX, X } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
+import { TerminalIcon, Copy, CopyCheck, ListX, X } from "lucide-react";
 
 interface TerminalProps {
   output: string[];
@@ -9,8 +9,12 @@ interface TerminalProps {
 }
 
 function Terminal({ output, terminalIsActive, onClose, onClear } : TerminalProps) {
-    const [height, setHeight] = useState(160);
-    const [isResizing, setIsResizing] = useState(false);
+    const [height, setHeight] = useState<number>(160);
+    const [isResizing, setIsResizing] = useState<boolean>(false);
+
+    const [isCopied, setIsCopied] = useState<boolean>(false);
+
+    const [error, setError] = useState<string | null>(null);
 
     const startResizing = useCallback(() => {
         setIsResizing(true);
@@ -19,6 +23,17 @@ function Terminal({ output, terminalIsActive, onClose, onClear } : TerminalProps
     const stopResizing = useCallback(() => {
         setIsResizing(false);
     }, []);
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(output.join("\n"));
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 1000);
+        } catch {
+            setError("Couldn't copy the output to the clipboard");
+            setTimeout(() => setError(null), 2000);
+        }
+    }
 
     useEffect(() => {
         const handleMouseMove = (e: any) => {
@@ -61,21 +76,51 @@ function Terminal({ output, terminalIsActive, onClose, onClear } : TerminalProps
                     borderBottom: '1px solid rgba(255,255,255,0.06)',
                 }}
             >
-                <div className="flex items-center h-full">
-                    <div
-                        className="flex items-center gap-2 px-3 h-full text-xs font-medium tracking-wide"
-                        style={{
-                            color: '#e0e0e0',
-                            borderBottom: '1px solid #bf5fff',
-                            marginBottom: '-1px',
-                        }}
-                    >
-                        <TerminalIcon size={11} style={{ color: '#bf5fff' }} />
-                        <span>Terminal</span>
+                <div className="flex items-center gap-2 h-full">
+                    <div className="flex items-center h-full">
+                        <div
+                            className="flex items-center gap-2 px-3 h-full text-xs font-medium tracking-wide"
+                            style={{
+                                color: '#e0e0e0',
+                                borderBottom: '1px solid #bf5fff',
+                                marginBottom: '-1px',
+                            }}
+                        >
+                            <TerminalIcon size={11} style={{ color: '#bf5fff' }} />
+                            <span>Terminal</span>
+                        </div>
                     </div>
+
+                    {error && (
+                        <span className="text-xs whitespace-nowrap" style={{ color: '#ff5f5f' }}>
+                            {error}
+                        </span>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-1">
+                    <button
+                        onClick={handleCopy}
+                        className="flex items-center gap-1.5 px-2 py-1 rounded text-xs transition-all"
+                        style={{ color: '#555', }}
+
+                        onMouseEnter={e => {
+                            e.currentTarget.style.color = '#aaa';
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                        }}
+
+                        onMouseLeave={e => {
+                            e.currentTarget.style.color = '#555';
+                            e.currentTarget.style.background = 'transparent';
+                        }}
+
+                        title="Copy output"
+                    >
+                        {isCopied ? <CopyCheck size={11} /> : <Copy size={11} />}
+                    </button>
+
+                    <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.07)' }} />
+
                     <button
                         onClick={onClear}
                         className="flex items-center gap-1.5 px-2 py-1 rounded text-xs transition-all"

@@ -1,4 +1,5 @@
 import "./App.css";
+
 import { useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Terminal from "./components/Terminal";
@@ -33,6 +34,10 @@ function App() {
   };
 
   const onFileClick = async (path: string) => {
+    if ((path != currentFilePath) && currentFilePath) {
+      await invoke("save_file_content", { path: currentFilePath, content: code });
+    }
+
     const content = await invoke<string>("read_file_content", { path });
     setCode(content);
     setCurrentFilePath(path);
@@ -46,6 +51,7 @@ function App() {
 
   const onVerify = async () => {
     if (!currentFilePath) return;
+
     await invoke("save_file_content", { path: currentFilePath, content: code });
     const result = await invoke<CompileResult>("verify_code", { sourcePath: currentFilePath });
     runResult(result);
@@ -53,6 +59,7 @@ function App() {
 
   const onUpload = async () => {
     if (!currentFilePath) return;
+
     await invoke("save_file_content", { path: currentFilePath, content: code });
     const result = await invoke<CompileResult>("upload_code", { sourcePath: currentFilePath });
     runResult(result);
@@ -67,7 +74,7 @@ function App() {
           isTerminalOn={() => {
             setTerminalActive(!terminalActive);
             setCurrentTab(!terminalActive ? "terminal" : "");
-          } }
+          }}
           isSerialMonitorOn={() => {
             setSerialMonitorActive(!serialMonitorActive);
             setCurrentTab(!serialMonitorActive ? "serial" : "");
@@ -98,8 +105,9 @@ function App() {
                 lineHeight={lineHeight}
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-neutral-600 text-sm">
-                Open a folder and select a file to start editing
+              <div className="flex flex-col h-full w-full items-center justify-center gap-2 text-neutral-600 text-sm">
+                <span className="text-neutral-400">No file open</span>
+                <span className="text-xs text-neutral-600">Open a folder and select a file to start editing</span>
               </div>
             )}
           </div>
