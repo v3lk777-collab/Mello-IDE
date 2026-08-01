@@ -7,6 +7,7 @@ import Titlebar from "./components/Titlebar";
 import { invoke } from "@tauri-apps/api/core";
 import CodeEditor from "./components/CodeEditor";
 import SerialMonitor from "./components/SerialMonitor";
+import { useLocalStorage } from "./hooks/useLocalStorage";
 
 interface CompileResult {
   success: boolean;
@@ -18,11 +19,14 @@ function App() {
   const [code, setCode] = useState<string>("");
   const [currentFilePath, setCurrentFilePath] = useState<string>("");
 
-  const [fontSize, setFontSize] = useState<number>(15);
-  const [lineHeight, setLineHeight] = useState<number>(22);
-  const [fontFamily, setFontFamily] = useState<string>("'Cascadia Code', monospace");
+  const [fontSize, setFontSize] = useLocalStorage("fontSize", 15);
+  const [lineHeight, setLineHeight] = useLocalStorage("lineHeight", 22);
+  const [fontFamily, setFontFamily] = useLocalStorage(
+    "fontFamily",
+    "'Cascadia Code', monospace"
+  );
 
-  const [theme, setTheme] = useState<string>("melloKids");
+  const [theme, setTheme] = useLocalStorage("theme", "melloKids");
 
   const [terminalActive, setTerminalActive] = useState<boolean>(false);
   const [serialMonitorActive, setSerialMonitorActive] = useState<boolean>(false);
