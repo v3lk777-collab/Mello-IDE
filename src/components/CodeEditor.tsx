@@ -18,7 +18,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                 width="100%"
                 height="100%"
                 theme={theme}
-                onMount={(_editor, monaco) => {
+                beforeMount={(monaco) => {
                     monaco.languages.register({ id: 'mello' });
 
                     monaco.languages.setMonarchTokensProvider('mello', {
@@ -55,6 +55,21 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                                 [/[,;]/,                        'delimiter'],
                             ],
                         },
+                    });
+
+                    monaco.languages.setLanguageConfiguration('mello', {
+                        brackets: [
+                            ['{', '}'],
+                            ['[', ']'],
+                            ['(', ')'],
+                        ],
+
+                        autoClosingPairs: [
+                            { open: '{', close: '}' },
+                            { open: '[', close: ']' },
+                            { open: '(', close: ')' },
+                            { open: '"', close: '"' },
+                        ],
                     });
 
                     monaco.languages.registerCompletionItemProvider('mello', {

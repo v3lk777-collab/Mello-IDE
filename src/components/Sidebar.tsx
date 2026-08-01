@@ -242,7 +242,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                 <div className="space-y-1">
                                     {[
                                         { label: "Kids", value: "melloKids" },
-                                        { label: "K-Drama", value: "kdrama" },
+                                        { label: "K-Drama", value: "girls" },
                                     ].map((t) => (
                                         <button
                                             key={t.label}

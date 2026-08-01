@@ -105,6 +105,12 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
           >
             <Activity size={14} /> <span className="text-xs font-bold">Serial Monitor</span>
           </button>
+
+          <button
+            className="flex items-center gap-1 px-3 py-1.5 rounded-md text-neutral-300 hover:bg-white/5 transition-all"
+          >
+            <span className="text-xs font-bold">OpenFile</span>
+          </button>
         </div>
       </div>
 

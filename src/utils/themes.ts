@@ -44,63 +44,51 @@ export const editorThemes: Record<string, editor.IStandaloneThemeData> = {
         }
     },
 
-    kdrama: {
+    girls: {
         base: 'vs-dark',
         inherit: true,
 
         rules: [
-            { token: 'keyword.def',       foreground: 'FF6FAE', fontStyle: 'bold' },
-            { token: 'keyword.control',   foreground: 'C7A6FF', fontStyle: 'bold' },
-            { token: 'keyword.io',        foreground: '7AE7FF', fontStyle: 'bold' },
-            { token: 'variable',          foreground: 'F6F3FF' },
-            { token: 'identifier',        foreground: 'F6F3FF' },
-            { token: 'type.name',         foreground: 'FFD7A8', fontStyle: 'italic' },
-            { token: 'number.int',        foreground: 'FFBE7A' },
-            { token: 'number.float',      foreground: 'FFBE7A' },
-            { token: 'string.quoted',     foreground: '8FF7C8' },
-            { token: 'comment.line',      foreground: '6F7695', fontStyle: 'italic' },
-            { token: 'operator',          foreground: 'FFC2E8' },
-            { token: 'delimiter.bracket', foreground: 'FFFFFF', fontStyle: 'bold' },
-            { token: 'delimiter',         foreground: '7E85A3' },
+            { token: 'keyword.def',       foreground: 'FF8FC7', fontStyle: 'bold' },
+            { token: 'keyword.control',   foreground: 'D8B8FF', fontStyle: 'bold' },
+            { token: 'keyword.io',        foreground: '9DEDFF', fontStyle: 'bold' },
+            { token: 'variable',          foreground: 'FBEFFF' },
+            { token: 'identifier',        foreground: 'FBEFFF' },
+            { token: 'type.name',         foreground: 'FFE2B8', fontStyle: 'italic' },
+            { token: 'number.int',        foreground: 'FFCB93' },
+            { token: 'number.float',      foreground: 'FFCB93' },
+            { token: 'string.quoted',     foreground: 'B0FADB' },
+            { token: 'comment.line',      foreground: '9089B3', fontStyle: 'italic' },
+            { token: 'operator',          foreground: 'FFD1EE' },
+            { token: 'delimiter.bracket', foreground: 'FFFDF7', fontStyle: 'bold' },
+            { token: 'delimiter',         foreground: 'A29BC4' },
         ],
 
         colors: {
-            'editor.background': '#0C0A14',
-            'editor.foreground': '#F6F3FF',
-
-            'editorCursor.foreground': '#FF6FAE',
-
-            'editor.selectionBackground': '#FF6FAE33',
-            'editor.inactiveSelectionBackground': '#FF6FAE18',
-
-            'editor.lineHighlightBackground': '#171326',
-            'editor.lineHighlightBorder': '#30284B',
-
-            'editorLineNumber.foreground': '#555C7A',
-            'editorLineNumber.activeForeground': '#FF6FAE',
-
-            'editorIndentGuide.background1': '#232038',
-            'editorIndentGuide.activeBackground1': '#C7A6FF99',
-
-            'editorBracketMatch.background': '#7AE7FF22',
-            'editorBracketMatch.border': '#7AE7FF',
-
-            'editor.findMatchBackground': '#FFD7A866',
-            'editor.findMatchHighlightBackground': '#FFD7A833',
-
-            'editorWhitespace.foreground': '#242038',
-
-            'editor.wordHighlightBackground': '#FF6FAE22',
-            'editor.wordHighlightStrongBackground': '#7AE7FF22',
-
-            'editor.selectionHighlightBackground': '#C7A6FF22',
-
-            'scrollbarSlider.background': '#FFFFFF10',
-            'scrollbarSlider.hoverBackground': '#FFFFFF22',
-            'scrollbarSlider.activeBackground': '#FF6FAE55',
-
-            'editorGutter.background': '#0C0A14',
-            'minimap.background': '#0C0A14'
+            'editor.background':                    '#180F24',
+            'editor.foreground':                    '#FBEFFF',
+            'editorCursor.foreground':               '#FF8FC7',
+            'editor.selectionBackground':            '#FF8FC740',
+            'editor.inactiveSelectionBackground':    '#FF8FC722',
+            'editor.lineHighlightBackground':        '#251A38',
+            'editor.lineHighlightBorder':            '#FFB6E166',
+            'editorLineNumber.foreground':           '#6E6690',
+            'editorLineNumber.activeForeground':     '#FF8FC7',
+            'editorIndentGuide.background1':         '#2B2141',
+            'editorIndentGuide.activeBackground1':   '#D8B8FFAA',
+            'editorBracketMatch.background':         '#9DEDFF2A',
+            'editorBracketMatch.border':              '#9DEDFF',
+            'editor.findMatchBackground':             '#FFE2B870',
+            'editor.findMatchHighlightBackground':    '#FFE2B840',
+            'editorWhitespace.foreground':            '#2E2748',
+            'editor.wordHighlightBackground':         '#FF8FC72A',
+            'editor.wordHighlightStrongBackground':   '#9DEDFF2A',
+            'editor.selectionHighlightBackground':    '#D8B8FF2A',
+            'scrollbarSlider.background':             '#FFFFFF14',
+            'scrollbarSlider.hoverBackground':        '#FF8FC72E',
+            'scrollbarSlider.activeBackground':       '#FF8FC766',
+            'editorGutter.background':                '#180F24',
+            'minimap.background':                     '#180F24',
         }
     }
 };
