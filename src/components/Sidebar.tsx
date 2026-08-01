@@ -11,12 +11,14 @@ interface SidebarProps {
     fontSize: number;
     fontFamily: string;
     lineHeight: number;
+    theme: string;
     onFontSizeChange?: (size: number) => void;
     onFontFamilyChange?: (family: string) => void;
     onLineHeightChange?: (height: number) => void;
+    onChangeTheme?: (theme: string) => void;
 }
 
-function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, onFontSizeChange, onFontFamilyChange, onLineHeightChange } : SidebarProps) {
+function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, theme, onFontSizeChange, onFontFamilyChange, onLineHeightChange, onChangeTheme } : SidebarProps) {
     const [activeItem, setActiveItem] = useState<string | null>("files");
     const [files, setFiles] = useState<FileItem[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -233,6 +235,28 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                     onChange={(e) => onLineHeightChange?.(Number(e.target.value))}
                                     className="w-full accent-[#a855f7]"
                                 />
+                            </div>
+
+                            <div>
+                                <span className="text-neutral-300 block mb-1.5 px-1">Theme</span>
+                                <div className="space-y-1">
+                                    {[
+                                        { label: "Kids", value: "melloKids" },
+                                        { label: "K-Drama", value: "kdrama" },
+                                    ].map((t) => (
+                                        <button
+                                            key={t.label}
+                                            onClick={() => onChangeTheme?.(t.value)}
+                                            className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors
+                                                ${theme === t.value 
+                                                ? "border-[#a855f7] bg-[#a855f7]/10 text-white" 
+                                                : "border-neutral-700 hover:bg-neutral-800 text-neutral-300"
+                                            }`}
+                                            >
+                                                {t.label}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>

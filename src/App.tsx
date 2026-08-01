@@ -22,6 +22,8 @@ function App() {
   const [lineHeight, setLineHeight] = useState<number>(22);
   const [fontFamily, setFontFamily] = useState<string>("'Cascadia Code', monospace");
 
+  const [theme, setTheme] = useState<string>("melloKids");
+
   const [terminalActive, setTerminalActive] = useState<boolean>(false);
   const [serialMonitorActive, setSerialMonitorActive] = useState<boolean>(false);
   const [terminalOutput, setTerminalOutput] = useState<string[]>([]);
@@ -92,6 +94,8 @@ function App() {
           lineHeight={lineHeight}
           fontFamily={fontFamily}
           fontSize={fontSize}
+          theme={theme}
+          onChangeTheme={setTheme}
         />
 
         <div className="flex flex-1 flex-col overflow-hidden">
@@ -103,6 +107,7 @@ function App() {
                 fontFamily={fontFamily}
                 fontSize={fontSize}
                 lineHeight={lineHeight}
+                theme={theme}
               />
             ) : (
               <div className="flex flex-col h-full w-full items-center justify-center gap-2 text-neutral-600 text-sm">
