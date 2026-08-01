@@ -18,6 +18,7 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
 
   const handleVerifyClick = async () => {
     setIsVerifying(true);
+    isTerminalOn();
 
     try {
       if (onVerify) {
@@ -32,6 +33,7 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
 
   const handleUploadClick = async () => {
     setIsUploading(true);
+    isTerminalOn();
 
     try {
       if (onUpload) {
@@ -104,12 +106,6 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
             className="flex items-center gap-1 px-3 py-1.5 rounded-md text-neutral-300 hover:bg-white/5 transition-all"
           >
             <Activity size={14} /> <span className="text-xs font-bold">Serial Monitor</span>
-          </button>
-
-          <button
-            className="flex items-center gap-1 px-3 py-1.5 rounded-md text-neutral-300 hover:bg-white/5 transition-all"
-          >
-            <span className="text-xs font-bold">OpenFile</span>
           </button>
         </div>
       </div>
