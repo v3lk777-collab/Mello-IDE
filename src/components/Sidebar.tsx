@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
+import { AnimatePresence, motion } from "framer-motion";
 import { FileNode, FileItem } from "./ui/FileNode";
 import { Folder, Settings, Search, FolderOpen, LucideInfo } from "lucide-react";
-
 
 interface SidebarProps {
     onFileClick: (path: string) => void;
@@ -19,7 +19,7 @@ interface SidebarProps {
 }
 
 function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, theme, onFontSizeChange, onFontFamilyChange, onLineHeightChange, onChangeTheme } : SidebarProps) {
-    const [activeItem, setActiveItem] = useState<string | null>("files");
+    const [activeItem, setActiveItem] = useState<string | null>("");
     const [files, setFiles] = useState<FileItem[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -32,7 +32,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
 
             if (selected) {
                 await invoke("initialize_project", { path: selected });
-                
+
                 const fetchedFiles = await invoke<FileItem[]>("get_directory_files", { path: selected });
                 setFiles(fetchedFiles);
                 onFolderOpen(selected as string);
@@ -76,7 +76,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                     <button
                         onClick={handleOpenFolder}
                         className="flex justify-center items-center w-full gap-2 px-3 py-2 bg-violet-600/10 text-violet-400 hover:bg-violet-600/20 rounded-md transition-all border border-violet-600/30 text-sm font-medium"
-                    > 
+                    >
                         <FolderOpen /> Open Folder
                     </button>
                 </div>
@@ -124,144 +124,148 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                 </div>
             </div>
 
-            {activeItem && (
-                <div
-                    className="w-64 bg-black border-r border-white/5 p-4 animate-in slide-in-from-left duration-300 flex flex-col"
-                    style={{
-                        width: activeItem ? "256px" : "0px",
-                        opacity: activeItem ? 1 : 0,
-                        transition: "width 280ms cubic-bezier(0.4, 0, 0.2, 1), opacity 220ms ease",
-                        minWidth: 0,
-                    }}
-                >
-                    <h2 className="text-white font-bold mb-4 pb-1 capitalize border-b border-white/5 shrink-0">
-                        {activeItem === "files" ? "Explorer" : activeItem}
-                    </h2>
-                    
-                    {activeItem === "files" && (
-                        <div className="flex-1 overflow-y-auto">
-                            {renderFilesList()}
-                        </div>
-                    )}
+            <AnimatePresence initial={false}>
+                {activeItem && (
+                    <motion.div
+                        key={activeItem}
+                        initial={{ width: 0, opacity: 0 }}
+                        animate={{ width: 256, opacity: 1 }}
+                        exit={{ width: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                        className="bg-black border-r border-white/5 flex flex-col overflow-hidden"
+                    >
+                        <div className="w-64 p-4 h-full flex flex-col">
+                            <h2 className="text-white font-bold mb-4 pb-1 capitalize border-b border-white/5 shrink-0">
+                                {activeItem === "files" ? "Explorer" : activeItem}
+                            </h2>
 
-                    {activeItem === "search" && (
-                        <div className="flex flex-col gap-4 w-full h-full overflow-hidden">
-                            <div className="relative shrink-0">
-                                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
-                                <input 
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full bg-black/20 py-2 pr-3 pl-9 text-neutral-200 rounded-md text-sm outline-none border border-white/10 focus:border-blue-500/50 focus:bg-black/40 transition-all placeholder:text-neutral-600" 
-                                    placeholder="Search in files..." 
-                                />
-                            </div>
-                            <div className="flex-1 overflow-y-auto">
-                                {renderFilesList()}
-                            </div>
-                        </div>
-                    )}
-
-                    {activeItem === "info" && (
-                        <div className="flex flex-col gap-4">
-                            <h3 className="text-white font-semibold">About Mello</h3>
-                            <p className="text-neutral-400 text-sm">
-                                Mello is a custom programming language designed to simplify embedded systems development.
-                            </p>
-                            <div className="border-t border-white/5 pt-4">
-                                <p className="text-neutral-500 text-xs uppercase font-bold">Created by</p>
-                                <p className="text-white text-sm">Mohammed Tamer Mohammed El-Azab</p>
-                            </div>
-                            <div className="border-t border-white/5 pt-4">
-                                <p className="text-neutral-500 text-xs uppercase font-bold">Version</p>
-                                <p className="text-white text-sm">v1.0.0</p>
-                            </div>
-                        </div>
-                    )}
-                    
-                    {activeItem === "settings" && (
-                        <div className="p-3 text-sm">
-                            <div className="space-y-5">
-                            
-                            <div>
-                                <div className="flex justify-between items-center mb-1.5 px-1">
-                                    <span className="text-neutral-300">Font Size</span>
-                                    <span className="font-mono text-[#a855f7]">{fontSize}px</span>
+                            {activeItem === "files" && (
+                                <div className="flex-1 overflow-y-auto">
+                                    {renderFilesList()}
                                 </div>
-                                <input
-                                    type="range"
-                                    min="12"
-                                    max="26"
-                                    step="1"
-                                    value={fontSize}
-                                    onChange={(e) => onFontSizeChange?.(Number(e.target.value))}
-                                    className="w-full accent-[#a855f7]"
-                                />
-                            </div>
+                            )}
 
-                            <div>
-                                <span className="text-neutral-300 block mb-1.5 px-1">Font Family</span>
-                                <div className="space-y-1">
-                                    {[
-                                        { label: "JetBrains Mono", value: "'JetBrains Mono', monospace" },
-                                        { label: "Fira Code", value: "'Fira Code', monospace" },
-                                        { label: "Cascadia Code", value: "'Cascadia Code', monospace" },
-                                    ].map((font) => (
-                                        <button
-                                            key={font.label}
-                                            onClick={() => onFontFamilyChange?.(font.value)}
-                                            className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors
-                                                ${fontFamily === font.value 
-                                                ? "border-[#a855f7] bg-[#a855f7]/10 text-white" 
-                                                : "border-neutral-700 hover:bg-neutral-800 text-neutral-300"
-                                            }`}
-                                            >
-                                                {font.label}
-                                        </button>
-                                    ))}
+                            {activeItem === "search" && (
+                                <div className="flex flex-col gap-4 w-full h-full overflow-hidden">
+                                    <div className="relative shrink-0">
+                                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+                                        <input
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            className="w-full bg-black/20 py-2 pr-3 pl-9 text-neutral-200 rounded-md text-sm outline-none border border-white/10 focus:border-blue-500/50 focus:bg-black/40 transition-all placeholder:text-neutral-600"
+                                            placeholder="Search in files..."
+                                        />
+                                    </div>
+                                    <div className="flex-1 overflow-y-auto">
+                                        {renderFilesList()}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
-                            <div>
-                                <div className="flex justify-between items-center mb-1.5 px-1">
-                                    <span className="text-neutral-300">Line Height</span>
-                                    <span className="font-mono text-[#a855f7]">{lineHeight}</span>
+                            {activeItem === "info" && (
+                                <div className="flex flex-col gap-4">
+                                    <h3 className="text-white font-semibold">About Mello</h3>
+                                    <p className="text-neutral-400 text-sm">
+                                        Mello is a custom programming language designed to simplify embedded systems development.
+                                    </p>
+                                    <div className="border-t border-white/5 pt-4">
+                                        <p className="text-neutral-500 text-xs uppercase font-bold">Created by</p>
+                                        <p className="text-white text-sm">Mohammed Tamer Mohammed El-Azab</p>
+                                    </div>
+                                    <div className="border-t border-white/5 pt-4">
+                                        <p className="text-neutral-500 text-xs uppercase font-bold">Version</p>
+                                        <p className="text-white text-sm">v1.0.0</p>
+                                    </div>
                                 </div>
-                                <input
-                                    type="range"
-                                    min="20"
-                                    max="34"
-                                    step="1"
-                                    value={lineHeight}
-                                    onChange={(e) => onLineHeightChange?.(Number(e.target.value))}
-                                    className="w-full accent-[#a855f7]"
-                                />
-                            </div>
+                            )}
 
-                            <div>
-                                <span className="text-neutral-300 block mb-1.5 px-1">Theme</span>
-                                <div className="space-y-1">
-                                    {[
-                                        { label: "Kids", value: "melloKids" },
-                                        { label: "K-Drama", value: "girls" },
-                                    ].map((t) => (
-                                        <button
-                                            key={t.label}
-                                            onClick={() => onChangeTheme?.(t.value)}
-                                            className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors
-                                                ${theme === t.value 
-                                                ? "border-[#a855f7] bg-[#a855f7]/10 text-white" 
-                                                : "border-neutral-700 hover:bg-neutral-800 text-neutral-300"
-                                            }`}
-                                            >
-                                                {t.label}
-                                        </button>
-                                    ))}
+                            {activeItem === "settings" && (
+                                <div className="p-3 text-sm">
+                                    <div className="space-y-5">
+
+                                        <div>
+                                            <div className="flex justify-between items-center mb-1.5 px-1">
+                                                <span className="text-neutral-300">Font Size</span>
+                                                <span className="font-mono text-[#a855f7]">{fontSize}px</span>
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="12"
+                                                max="26"
+                                                step="1"
+                                                value={fontSize}
+                                                onChange={(e) => onFontSizeChange?.(Number(e.target.value))}
+                                                className="w-full accent-[#a855f7]"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <span className="text-neutral-300 block mb-1.5 px-1">Font Family</span>
+                                            <div className="space-y-1">
+                                                {[
+                                                    { label: "JetBrains Mono", value: "'JetBrains Mono', monospace" },
+                                                    { label: "Fira Code", value: "'Fira Code', monospace" },
+                                                    { label: "Cascadia Code", value: "'Cascadia Code', monospace" },
+                                                ].map((font) => (
+                                                    <button
+                                                        key={font.label}
+                                                        onClick={() => onFontFamilyChange?.(font.value)}
+                                                        className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors
+                                                            ${fontFamily === font.value
+                                                            ? "border-[#a855f7] bg-[#a855f7]/10 text-white"
+                                                            : "border-neutral-700 hover:bg-neutral-800 text-neutral-300"
+                                                        }`}
+                                                    >
+                                                        {font.label}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <div className="flex justify-between items-center mb-1.5 px-1">
+                                                <span className="text-neutral-300">Line Height</span>
+                                                <span className="font-mono text-[#a855f7]">{lineHeight}</span>
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="20"
+                                                max="34"
+                                                step="1"
+                                                value={lineHeight}
+                                                onChange={(e) => onLineHeightChange?.(Number(e.target.value))}
+                                                className="w-full accent-[#a855f7]"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <span className="text-neutral-300 block mb-1.5 px-1">Theme</span>
+                                            <div className="space-y-1">
+                                                {[
+                                                    { label: "Kids", value: "melloKids" },
+                                                    { label: "Girls (K-Drama)", value: "girls" },
+                                                ].map((t) => (
+                                                    <button
+                                                        key={t.label}
+                                                        onClick={() => onChangeTheme?.(t.value)}
+                                                        className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors
+                                                            ${theme === t.value
+                                                            ? "border-[#a855f7] bg-[#a855f7]/10 text-white"
+                                                            : "border-neutral-700 hover:bg-neutral-800 text-neutral-300"
+                                                        }`}
+                                                    >
+                                                        {t.label}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
-                    </div>
+                    </motion.div>
                 )}
-            </div>)}
+            </AnimatePresence>
         </div>
     );
 }

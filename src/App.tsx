@@ -1,13 +1,16 @@
 import "./App.css";
 
 import { useState } from "react";
+import { TypeAnimation } from "react-type-animation";
+import { AnimatePresence, motion } from "framer-motion";
+import { useLocalStorage } from "./hooks/useLocalStorage";
+
 import Sidebar from "./components/Sidebar";
 import Terminal from "./components/Terminal";
 import Titlebar from "./components/Titlebar";
 import { invoke } from "@tauri-apps/api/core";
 import CodeEditor from "./components/CodeEditor";
 import SerialMonitor from "./components/SerialMonitor";
-import { useLocalStorage } from "./hooks/useLocalStorage";
 
 interface CompileResult {
   success: boolean;
@@ -115,37 +118,94 @@ function App() {
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="flex-1 overflow-hidden relative">
             {currentFilePath ? (
-              <CodeEditor
-                code={code}
-                onChange={setCode}
-                fontFamily={fontFamily}
-                fontSize={fontSize}
-                lineHeight={lineHeight}
-                theme={theme}
-              />
+              <AnimatePresence initial={false}>
+                <motion.div
+                  key={currentFilePath}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.75, ease: [0.4, 0, 0.2, 1] }}
+                  className="absolute inset-0"
+                >
+                  <CodeEditor
+                    code={code}
+                    onChange={setCode}
+                    fontFamily={fontFamily}
+                    fontSize={fontSize}
+                    lineHeight={lineHeight}
+                    theme={theme}
+                  />
+                </motion.div>
+              </AnimatePresence>
             ) : (
-              <div className="flex flex-col h-full w-full items-center justify-center gap-2 text-neutral-600 text-sm">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.75, ease: [0.4, 0, 0.2, 1] }}
+                className="flex flex-col h-full w-full items-center justify-center gap-2 text-neutral-600 text-sm"
+              >
                 <span className="text-neutral-400">No file open</span>
-                <span className="text-xs text-neutral-600">Open a folder and select a file to start editing</span>
-              </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-neutral-600">Open a folder and select a file to start coding with</span>
+                  <TypeAnimation
+                    sequence={[
+                      "Mello", 1500,
+                      "Embedded", 1500,
+                      "Performance", 1500,
+                      "Creativity", 1500,
+                      "Innovation", 1500,
+                      "Future", 1500,
+                      "Modern C++", 1500,
+                    ]}
+                    wrapper="span"
+                    speed={45}
+                    repeat={Infinity}
+                    cursor
+                    className="text-violet-400 font-semibold"
+                  />
+                </div>
+              </motion.div>
             )}
           </div>
 
-          {currentTab == "terminal" &&
-            <Terminal
-              output={terminalOutput}
-              terminalIsActive={terminalActive}
-              onClose={() => setTerminalActive(false)}
-              onClear={() => setTerminalOutput([])}
-            />
-          }
+          <AnimatePresence initial={false}>
+            {(terminalActive && currentTab === "terminal") && (
+              <motion.div
+                key="terminal"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                className="overflow-hidden"
+              >
+                <Terminal
+                  output={terminalOutput}
+                  terminalIsActive={terminalActive}
+                  onClose={() => setTerminalActive(false)}
+                  onClear={() => setTerminalOutput([])}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {currentTab == "serial" &&
-            <SerialMonitor
-              serialMonterActive={serialMonitorActive}
-              onClose={() => setSerialMonitorActive(false)}
-            />
-          }
+          <AnimatePresence initial={false}>
+            {(serialMonitorActive && currentTab === "serial") && (
+              <motion.div
+                key="serial"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                className="overflow-hidden"
+              >
+                <SerialMonitor
+                  serialMonterActive={serialMonitorActive}
+                  onClose={() => setSerialMonitorActive(false)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </main>
