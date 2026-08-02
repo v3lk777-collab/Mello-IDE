@@ -56,6 +56,10 @@ function App() {
   };
 
   const onVerify = async () => {
+    setTerminalActive(true);
+    setCurrentTab("terminal");
+    setTerminalOutput([]);
+
     if (!currentFilePath) return;
 
     await invoke("save_file_content", { path: currentFilePath, content: code });
@@ -64,6 +68,10 @@ function App() {
   };
 
   const onUpload = async () => {
+    setTerminalActive(true);
+    setCurrentTab("terminal");
+    setTerminalOutput([]);
+
     if (!currentFilePath) return;
 
     await invoke("save_file_content", { path: currentFilePath, content: code });
@@ -77,10 +85,12 @@ function App() {
         <Titlebar
           onVerify={onVerify}
           onUpload={onUpload}
+
           isTerminalOn={() => {
             setTerminalActive(!terminalActive);
             setCurrentTab(!terminalActive ? "terminal" : "");
           }}
+
           isSerialMonitorOn={() => {
             setSerialMonitorActive(!serialMonitorActive);
             setCurrentTab(!serialMonitorActive ? "serial" : "");

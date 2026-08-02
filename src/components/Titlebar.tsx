@@ -18,7 +18,6 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
 
   const handleVerifyClick = async () => {
     setIsVerifying(true);
-    isTerminalOn();
 
     try {
       if (onVerify) {
@@ -33,7 +32,6 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
 
   const handleUploadClick = async () => {
     setIsUploading(true);
-    isTerminalOn();
 
     try {
       if (onUpload) {
@@ -112,7 +110,7 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
 
       <div className="flex items-center">
         <div className="flex items-center px-4 gap-1.5">
-          <button 
+          <button
             onClick={() => handleVerifyClick()}
             disabled={isVerifying || isUploading}
             className="flex items-center gap-2 px-3 py-1.5 bg-green-600/20 text-green-400 hover:bg-green-600/30 rounded-md transition-colors border border-green-600/50"
@@ -125,7 +123,7 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
 
             <span className="text-xs font-bold">{isVerifying ? "Verifying" : "Verify"}</span>
           </button>
-          <button 
+          <button
             onClick={() => handleUploadClick()}
             disabled={isUploading || isVerifying}
             className="flex items-center gap-2 px-3 py-1.5 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded-md transition-colors border border-blue-600/50"
