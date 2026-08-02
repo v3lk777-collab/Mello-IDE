@@ -1,7 +1,11 @@
 # Mello IDE
 
-[Node.js](https://nodejs.org/) and a package manager (npm/pnpm/yarn)
-[Rust](https://www.rust-lang.org/tools/install) and the [Tauri CLI](https://tauri.app/start/prerequisites/)
+[![Rust](https://shields.io)](https://rust-lang.org)
+[![Tauri](https://shields.io)](https://tauri.app)
+[![TypeScript](https://shields.io)](https://typescriptlang.org)
+[![Tailwind CSS](https://shields.io)](https://tailwindcss.com)
+[![Node.js](https://shields.io)](https://nodejs.org)
+[![npm](https://shields.io)](https://npmjs.com)
 
 A lightweight, purpose-built desktop IDE for the **Mello** programming language — an indentation-based, Python-like language that transpiles to native Arduino C++ with zero runtime overhead. Mello IDE wraps the Mello compiler in a fast, themeable editor with built-in file management, a terminal, and a serial monitor for working directly with Arduino boards.
 
