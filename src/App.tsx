@@ -128,6 +128,7 @@ function App() {
                   className="absolute inset-0"
                 >
                   <CodeEditor
+                    key="editor"
                     code={code}
                     onChange={setCode}
                     fontFamily={fontFamily}
@@ -139,30 +140,45 @@ function App() {
               </AnimatePresence>
             ) : (
               <motion.div
+                key="empty-state"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.75, ease: [0.4, 0, 0.2, 1] }}
+                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                 className="flex flex-col h-full w-full items-center justify-center gap-2 text-neutral-600 text-sm"
               >
-                <span className="text-neutral-400">No file open</span>
-                <div className="flex items-center gap-1">
-                  <span className="text-xs text-neutral-600">Open a folder and select a file to start coding with</span>
+                <div className="flex flex-col w-full items-center gap-2">
+                  <span className="text-neutral-400">No folder or file open</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-neutral-600">Open a folder and select a file to start coding with</span>
+
+                    <TypeAnimation
+                      sequence={[
+                        "Mello", 1500,
+                        "Arduino", 1500,
+                      ]}
+
+                      wrapper="span"
+                      speed={45}
+                      repeat={Infinity}
+                      cursor
+                      className="text-violet-400"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col absolute w-full items-center bottom-0 mb-2">
                   <TypeAnimation
                     sequence={[
-                      "Mello", 1500,
-                      "Embedded", 1500,
-                      "Performance", 1500,
-                      "Creativity", 1500,
-                      "Innovation", 1500,
-                      "Future", 1500,
-                      "Modern C++", 1500,
+                      "I was listening to 'This is me trying' by Taylor Swift", 1500,
+                      "and 'Ocean Eyes' by Billie Eilish", 1500,
+                      "when I did this", 1500,
                     ]}
+
                     wrapper="span"
                     speed={45}
                     repeat={Infinity}
                     cursor
-                    className="text-violet-400 font-semibold"
                   />
                 </div>
               </motion.div>

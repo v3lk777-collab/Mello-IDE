@@ -27,6 +27,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                             'if', 'elif', 'else', 'return', 'every', 'while', 'for', 'repeat',
                             'or', 'and', 'not', 'in', 'range', 'break', 'continue'
                         ],
+
                         keywords_io:      [
                             'turn_on', 'turn_off', 'toggle', 'wait', 'write', 'read', 'serial.start', 'serial.print', 'serial.println',
                             'scale', 'serial.read', 'serial.available', 'on_press', 'serial.availableForWrite', 'serial.end',
@@ -89,6 +90,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
 
                             return { suggestions };
                         },
+
                         triggerCharacters: ['.', 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_'],
                     });
 

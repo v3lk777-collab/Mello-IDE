@@ -28,10 +28,11 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "publisher": "Mohammed El-Azab",
-    "copyright": "Copyright © 2026 Mohammed El-Azab. All rights reserved.",
+    "publisher": "Mohammed Tamer El-Azab",
+    "copyright": "Copyright © 2026 Mohammed Tamer Mohammed Ahmed El-Azab Nour. All rights reserved.",
     "shortDescription": "Modern IDE for Mello Programming Language",
     "longDescription": "A lightweight, high-performance IDE built for transpiling Mello code into optimized C++ for microcontrollers.",
+
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -39,6 +40,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
+  
     "resources": [
       "mello/build/mello.exe",
       "mello/bin/win32/arduino-cli.exe",
