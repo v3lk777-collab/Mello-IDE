@@ -1,6 +1,9 @@
 # Mello IDE
 
-A lightweight, purpose-built desktop IDE for the **Mello** programming language — an indentation-based, Python-like language that transpiles to native Arduino C++ with zero runtime overhead. Mello IDE wraps the Mello compiler in a fast, dark-themed editor with built-in file management, a terminal, and a serial monitor for working directly with Arduino boards.
+[Node.js](https://nodejs.org/) and a package manager (npm/pnpm/yarn)
+[Rust](https://www.rust-lang.org/tools/install) and the [Tauri CLI](https://tauri.app/start/prerequisites/)
+
+A lightweight, purpose-built desktop IDE for the **Mello** programming language — an indentation-based, Python-like language that transpiles to native Arduino C++ with zero runtime overhead. Mello IDE wraps the Mello compiler in a fast, themeable editor with built-in file management, a terminal, and a serial monitor for working directly with Arduino boards.
 
 Built with **Tauri**, **Rust**, and **React + TypeScript**.
 
@@ -8,15 +11,18 @@ Built with **Tauri**, **Rust**, and **React + TypeScript**.
 
 ## Features
 
-- **Monaco-based code editor** with a custom Mello language definition (`melloKids` theme):
+- **Monaco-based code editor** with a custom Mello language definition:
   - Syntax highlighting for definitions (`start`, `loop`, `func`), control flow (`if`, `elif`, `else`, `while`, `for`, `repeat`, `every`, `return`, `or`, `and`, `not`, `in`, `range`, `break`, `continue`), and I/O calls (`turn_on`, `turn_off`, `toggle`, `wait`, `write`, `read`, `scale`, `on_press`, `len`, `sleep`, and the `serial.*` family)
   - Autocomplete / snippet suggestions for all language keywords and built-in functions
+  - Auto-closing brackets and quotes (`{}`, `[]`, `()`, `"`)
+  - Two switchable editor themes (`melloKids`, `girls`), selectable from Settings and persisted across sessions
   - Adjustable font size, font family (JetBrains Mono, Fira Code, Cascadia Code), and line height
-- **Project explorer** — open a folder, browse nested directories, open/save files
+- **Project explorer** — open a folder, browse nested directories, open/save files, with unsaved edits on the current file auto-saved before switching to another
 - **In-app search** to filter files by name
 - **Verify / Upload** — compiles the current file with the Mello compiler and optionally flashes it to a connected board, streaming results to the terminal
-- **Integrated terminal** — resizable output panel with color-coded lines (errors, warnings, success, compiler messages)
+- **Integrated terminal** — resizable output panel with color-coded lines (errors, warnings, success, compiler messages) and a one-click copy of the full output
 - **Serial Monitor** — list available ports, choose a baud rate, connect/disconnect, view incoming data live, and send messages to the board
+- **Animated UI** — panel open/close (sidebar, terminal, serial monitor) and view transitions are handled with Framer Motion instead of abrupt show/hide
 - **Custom window chrome** — draggable titlebar with minimize/maximize/close, built on Tauri's window APIs
 
 ## Tech Stack
@@ -25,6 +31,7 @@ Built with **Tauri**, **Rust**, and **React + TypeScript**.
 - React + TypeScript (Vite)
 - Tailwind CSS
 - Monaco Editor (`@monaco-editor/react`)
+- Framer Motion for panel and transition animations
 - `lucide-react` for icons
 - Tauri JS APIs (`@tauri-apps/api`, `@tauri-apps/plugin-dialog`, `@tauri-apps/plugin-fs`)
 
@@ -38,25 +45,30 @@ Built with **Tauri**, **Rust**, and **React + TypeScript**.
 
 ```
 mello-ide/
-├── src/                        # React frontend
-│   ├── App.tsx                 # App shell, state, and layout
+├── src/                           # React frontend
+│   ├── App.tsx                    # App shell, state, and layout
 │   ├── components/
-│   │   ├── Titlebar.tsx        # Custom window bar (Verify/Upload/Terminal/Serial toggles)
-│   │   ├── Sidebar.tsx         # File explorer, search, info, and settings panels
-│   │   ├── CodeEditor.tsx      # Monaco editor + Mello language/theme/autocomplete
-│   │   ├── Terminal.tsx        # Compiler output panel
-│   │   ├── SerialMonitor.tsx   # Serial port connection & live data panel
-│   │   └── ui/FileNode.tsx     # Recursive file/folder tree node
+│   │   ├── Titlebar.tsx           # Custom window bar (Verify/Upload/Terminal/Serial toggles)
+│   │   ├── Sidebar.tsx            # File explorer, search, info, and settings panels
+│   │   ├── CodeEditor.tsx         # Monaco editor + Mello language/theme/autocomplete
+│   │   ├── Terminal.tsx           # Compiler output panel
+│   │   ├── SerialMonitor.tsx      # Serial port connection & live data panel
+│   │   └── ui/FileNode.tsx        # Recursive file/folder tree node
+│   ├── hooks/
+│   │   └── useLocalStorage.ts     # Persisted state (font settings, theme)
+│   ├── utils/
+│   │   └── themes.ts              # Monaco theme definitions (melloKids, girls)
 │   └── main.tsx
 └── src-tauri/
     ├── src/
     │   ├── main.rs
-    │   ├── lib.rs               # Tauri builder, plugins, managed state, command registry
-    │   ├── state.rs             # SerialState, ProjectState
+    │   ├── lib.rs                  # Tauri builder, plugins, managed state, command registry
+    │   ├── state.rs                # SerialState, ProjectState
     │   └── commands/
-    │       ├── fs.rs            # initialize_project, get_directory_files, read/save file
-    │       ├── compiler.rs      # verify_code, upload_code (shells out to the Mello compiler)
-    │       └── serial.rs        # list_ports, open/close_serial, send_serial
+    │       ├── fs.rs               # initialize_project, get_directory_files, read/save file
+    │       ├── compiler.rs         # verify_code, upload_code (shells out to the Mello compiler)
+    │       ├── serial.rs           # list_ports, open/close_serial, send_serial
+    │       └── window_commands.rs  # close_splashscreen (splash → main window handoff)
     └── ...
 ```
 
@@ -74,6 +86,7 @@ mello-ide/
 | `open_serial` | Opens a serial connection at a given baud rate and streams incoming data as `serial_data` events |
 | `close_serial` | Closes the active serial connection |
 | `send_serial` | Sends a message over the open serial connection |
+| `close_splashscreen` | Closes the splash window and reveals the main window once the app is ready |
 
 ## Prerequisites
 
