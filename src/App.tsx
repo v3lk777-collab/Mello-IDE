@@ -1,6 +1,7 @@
 import "./App.css";
 
 import { useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import { TypeAnimation } from "react-type-animation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocalStorage } from "./hooks/useLocalStorage";
@@ -8,7 +9,6 @@ import { useLocalStorage } from "./hooks/useLocalStorage";
 import Sidebar from "./components/Sidebar";
 import Terminal from "./components/Terminal";
 import Titlebar from "./components/Titlebar";
-import { invoke } from "@tauri-apps/api/core";
 import CodeEditor from "./components/CodeEditor";
 import SerialMonitor from "./components/SerialMonitor";
 
@@ -24,10 +24,7 @@ function App() {
 
   const [fontSize, setFontSize] = useLocalStorage("fontSize", 15);
   const [lineHeight, setLineHeight] = useLocalStorage("lineHeight", 22);
-  const [fontFamily, setFontFamily] = useLocalStorage(
-    "fontFamily",
-    "'Cascadia Code', monospace"
-  );
+  const [fontFamily, setFontFamily] = useLocalStorage("fontFamily", "'Cascadia Code', monospace");
 
   const [theme, setTheme] = useLocalStorage("theme", "melloKids");
 
@@ -144,7 +141,7 @@ function App() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                transition={{ duration: 2, ease: [0.4, 0, 0.2, 1] }}
                 className="flex flex-col h-full w-full items-center justify-center gap-2 text-neutral-600 text-sm"
               >
                 <div className="flex flex-col w-full items-center gap-2">

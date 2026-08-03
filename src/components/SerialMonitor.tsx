@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { LucideRefreshCw, Plug, PlugZap, Send, ChevronDown, ListX, X } from "lucide-react";
 
 interface serialMonitorProps {
@@ -11,17 +11,21 @@ interface serialMonitorProps {
 const BAUD_RATES = [300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200];
 
 function SerialMonitor({ onClose, serialMonterActive } : serialMonitorProps) {
-    const [ports, setPorts]         = useState<string[]>([]);
-    const [selectedPort, setPort]   = useState("");
-    const [baud, setBaud]           = useState(9600);
+    const [baud, setBaud]  = useState(9600);
+    const [selectedPort, setPort] = useState("");
+    const [ports, setPorts] = useState<string[]>([]);
     const [connected, setConnected] = useState(false);
-    const [output, setOutput]       = useState<string[]>([]);
-    const [input, setInput]         = useState("");
+
+    const [input, setInput] = useState("");
+    const [output, setOutput] = useState<string[]>([]);
+
     const [autoScroll, setAutoScroll] = useState(true);
-    const bottomRef = useRef<HTMLDivElement>(null);
-    const unlistenRef = useRef<(() => void) | null>(null);
+
     const [height, setHeight] = useState(160);
     const [isResizing, setIsResizing] = useState(false);
+
+    const bottomRef = useRef<HTMLDivElement>(null);
+    const unlistenRef = useRef<(() => void) | null>(null);
 
     const refreshPorts = async () => {
         const list = await invoke<string[]>("list_ports");
@@ -134,7 +138,12 @@ function SerialMonitor({ onClose, serialMonterActive } : serialMonitorProps) {
                         disabled={connected}
                         className="appearance-none bg-[#1a1a1a] border border-white/10 text-neutral-300 rounded px-2 py-1 pr-6 text-xs focus:outline-none focus:border-purple-500/50 disabled:opacity-40"
                     >
-                        {BAUD_RATES.map(b => <option key={b} value={b}>{b}</option>)}
+                        {BAUD_RATES.map(baudRate =>
+                            <option
+                                key={baudRate}
+                                value={baudRate}
+                            >{baudRate}</option>
+                        )}
                     </select>
                     <ChevronDown size={10} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none" />
                 </div>

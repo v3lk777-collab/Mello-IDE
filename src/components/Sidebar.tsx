@@ -6,16 +6,16 @@ import { FileNode, FileItem } from "./ui/FileNode";
 import { Folder, Settings, Search, FolderOpen, LucideInfo } from "lucide-react";
 
 interface SidebarProps {
-    onFileClick: (path: string) => void;
-    onFolderOpen: (path: string) => void;
+    theme: string;
     fontSize: number;
     fontFamily: string;
     lineHeight: number;
-    theme: string;
+    onFileClick: (path: string) => void;
+    onFolderOpen: (path: string) => void;
+    onChangeTheme?: (theme: string) => void;
     onFontSizeChange?: (size: number) => void;
     onFontFamilyChange?: (family: string) => void;
     onLineHeightChange?: (height: number) => void;
-    onChangeTheme?: (theme: string) => void;
 }
 
 function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, theme, onFontSizeChange, onFontFamilyChange, onLineHeightChange, onChangeTheme } : SidebarProps) {
@@ -168,10 +168,12 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                     <p className="text-neutral-400 text-sm">
                                         Mello is a custom programming language designed to simplify embedded systems development.
                                     </p>
+
                                     <div className="border-t border-white/5 pt-4">
                                         <p className="text-neutral-500 text-xs uppercase font-bold">Created by</p>
                                         <p className="text-white text-sm">Mohammed Tamer Mohammed El-Azab</p>
                                     </div>
+
                                     <div className="border-t border-white/5 pt-4">
                                         <p className="text-neutral-500 text-xs uppercase font-bold">Version</p>
                                         <p className="text-white text-sm">v1.0.0</p>
@@ -188,6 +190,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                                 <span className="text-neutral-300">Font Size</span>
                                                 <span className="font-mono text-[#a855f7]">{fontSize}px</span>
                                             </div>
+
                                             <input
                                                 type="range"
                                                 min="12"
