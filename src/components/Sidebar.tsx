@@ -1,9 +1,30 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
-import { AnimatePresence, motion } from "framer-motion";
 import { FileNode, FileItem } from "./ui/FileNode";
+import { AnimatePresence, motion } from "framer-motion";
 import { Folder, Settings, Search, FolderOpen, LucideInfo } from "lucide-react";
+
+const menuItems = [
+    { id: "files", icon: Folder },
+    { id: "search", icon: Search }
+];
+
+const menuItemsFooter = [
+    { id: "info", icon: LucideInfo },
+    { id: "settings", icon: Settings }
+];
+
+const themes = [
+    { label: "Kids", value: "melloKids" },
+    { label: "Girls (K-Drama)", value: "girls" },
+];
+
+const fonts = [
+    { label: "JetBrains Mono", value: "'JetBrains Mono', monospace" },
+    { label: "Fira Code", value: "'Fira Code', monospace" },
+    { label: "Cascadia Code", value: "'Cascadia Code', monospace" }
+]
 
 interface SidebarProps {
     theme: string;
@@ -41,16 +62,6 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
             console.error("Failed to open folder:", error);
         }
     };
-
-    const menuItems = [
-        { id: "files", icon: Folder },
-        { id: "search", icon: Search }
-    ];
-
-    const menuItemsFooter = [
-        { id: "info", icon: LucideInfo },
-        { id: "settings", icon: Settings }
-    ];
 
     const togglePanel = (id: string) => {
         setActiveItem(activeItem === id ? null : id);
@@ -90,7 +101,11 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
         return (
             <div className="space-y-0.5">
                 {displayedFiles.map((file) => (
-                    <FileNode key={file.path} file={file} onFileClick={onFileClick} />
+                    <FileNode
+                        key={file.path}
+                        file={file}
+                        onFileClick={onFileClick}
+                    />
                 ))}
             </div>
         );
@@ -136,7 +151,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                     >
                         <div className="w-64 p-4 h-full flex flex-col">
                             <h2 className="text-white font-bold mb-4 pb-1 capitalize border-b border-white/5 shrink-0">
-                                {activeItem === "files" ? "Explorer" : activeItem}
+                                {activeItem === "files" ? "Explorer" : activeItem === "info" ? "About" : activeItem}
                             </h2>
 
                             {activeItem === "files" && (
@@ -153,7 +168,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                         <input
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="w-full bg-black/20 py-2 pr-3 pl-9 text-neutral-200 rounded-md text-sm outline-none border border-white/10 focus:border-blue-500/50 focus:bg-black/40 transition-all placeholder:text-neutral-600"
+                                            className="w-full bg-black/20 py-2 pr-3 pl-9 text-neutral-200 rounded-md text-sm outline-none border border-white/10 focus:border-violet-600/20 focus:bg-black/40 transition-all placeholder:text-neutral-600"
                                             placeholder="Search in files..."
                                         />
                                     </div>
@@ -166,19 +181,19 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
 
                             {activeItem === "info" && (
                                 <div className="flex flex-col gap-4">
-                                    <h3 className="text-white font-semibold">About Mello</h3>
-                                    <p className="text-neutral-400 text-sm">
-                                        Mello is a custom programming language designed to simplify embedded systems development.
-                                    </p>
-
-                                    <div className="border-t border-white/5 pt-4">
-                                        <p className="text-neutral-500 text-xs uppercase font-bold">Created by</p>
-                                        <p className="text-white text-sm">Mohammed Tamer Mohammed El-Azab</p>
+                                    <div className="gap-1">
+                                        <p className="text-neutral-500 text-xs uppercase font-bold">About Mello</p>
+                                        <p className="text-white text-sm">Mello compiles directly to native C++ — no runtime interpreter, no virtual machine. Write readable, Python-like code and get the exact binary footprint of hand-written Arduino C++</p>
                                     </div>
 
-                                    <div className="border-t border-white/5 pt-4">
+                                    <div className="border-t border-white/5 pt-4 gap-1">
+                                        <p className="text-neutral-500 text-xs uppercase font-bold">Created by</p>
+                                        <p className="text-white text-sm">Mohammed Tamer Mohammed El-Azab Nour</p>
+                                    </div>
+
+                                    <div className="border-t border-white/5 pt-4 gap-1">
                                         <p className="text-neutral-500 text-xs uppercase font-bold">Version</p>
-                                        <p className="text-white text-sm">v1.0.0</p>
+                                        <p className="text-white text-sm">v0.1.1</p>
                                     </div>
                                 </div>
                             )}
@@ -207,11 +222,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                         <div>
                                             <span className="text-neutral-300 block mb-1.5 px-1">Font Family</span>
                                             <div className="space-y-1">
-                                                {[
-                                                    { label: "JetBrains Mono", value: "'JetBrains Mono', monospace" },
-                                                    { label: "Fira Code", value: "'Fira Code', monospace" },
-                                                    { label: "Cascadia Code", value: "'Cascadia Code', monospace" },
-                                                ].map((font) => (
+                                                {fonts.map((font) => (
                                                     <button
                                                         key={font.label}
                                                         onClick={() => onFontFamilyChange?.(font.value)}
@@ -246,10 +257,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                         <div>
                                             <span className="text-neutral-300 block mb-1.5 px-1">Theme</span>
                                             <div className="space-y-1">
-                                                {[
-                                                    { label: "Kids", value: "melloKids" },
-                                                    { label: "Girls (K-Drama)", value: "girls" },
-                                                ].map((t) => (
+                                                {themes.map((t) => (
                                                     <button
                                                         key={t.label}
                                                         onClick={() => onChangeTheme?.(t.value)}
