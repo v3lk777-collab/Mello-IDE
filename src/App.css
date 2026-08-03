@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 *[data-tauri-drag-region] {
-  user-select: none;
   app-region: drag;
+
+  -webkit-user-select: none;
+
+  user-select: none;
 }
 
 @theme {

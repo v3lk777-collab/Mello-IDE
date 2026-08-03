@@ -25,13 +25,13 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                         keywords_def:     ['start', 'loop', 'func'],
                         keywords_control: [
                             'if', 'elif', 'else', 'return', 'every', 'while', 'for', 'repeat',
-                            'or', 'and', 'not', 'in', 'range', 'break', 'continue'
+                            'or', 'and', 'not', 'in', 'range', 'break', 'continue', 'on_press'
                         ],
 
                         keywords_io:      [
                             'turn_on', 'turn_off', 'toggle', 'wait', 'write', 'read', 'serial.start', 'serial.print', 'serial.println',
-                            'scale', 'serial.read', 'serial.available', 'on_press', 'serial.availableForWrite', 'serial.end',
-                            'serial.find', 'serial.findUntil', 'serial.waitUntilSend', 'serial.parseFloat', 'serial.parseInt',
+                            'scale', 'serial.read', 'serial.available', 'serial.availableForWrite', 'serial.end', 'serial.find',
+                            'serial.findUntil', 'serial.waitUntilSend', 'serial.parseFloat', 'serial.parseInt',
                             'serial.peek', 'len', 'sleep'
                         ],
 

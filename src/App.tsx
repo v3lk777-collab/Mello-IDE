@@ -51,6 +51,7 @@ function App() {
 
   const runResult = (result: CompileResult) => {
     const lines = (result.success ? result.output : result.error).split("\n").filter(Boolean);
+
     setTerminalOutput((prev) => [...prev, ...lines]);
     setTerminalActive(true);
   };
@@ -153,6 +154,8 @@ function App() {
                       sequence={[
                         "Mello", 1500,
                         "Arduino", 1500,
+                        "Speed", 1500,
+                        "Proformance", 1500,
                       ]}
 
                       wrapper="span"
@@ -189,7 +192,7 @@ function App() {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                transition={{ duration: 0.40, ease: [0.4, 0, 0.2, 1] }}
                 className="overflow-hidden"
               >
                 <Terminal
@@ -209,7 +212,7 @@ function App() {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                transition={{ duration: 0.40, ease: [0.4, 0, 0.2, 1] }}
                 className="overflow-hidden"
               >
                 <SerialMonitor

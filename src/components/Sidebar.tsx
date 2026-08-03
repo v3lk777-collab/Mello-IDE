@@ -24,7 +24,7 @@ const fonts = [
     { label: "JetBrains Mono", value: "'JetBrains Mono', monospace" },
     { label: "Fira Code", value: "'Fira Code', monospace" },
     { label: "Cascadia Code", value: "'Cascadia Code', monospace" }
-]
+];
 
 interface SidebarProps {
     theme: string;
@@ -75,8 +75,12 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
     const renderFilesList = () => {
         if (files.length === 0) {
             return (
-                <div
+                <motion.div
                     key={activeItem}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
                     className="flex flex-col h-full items-center justify-between gap-3 py-6 px-4 text-center animate-in slide-in-from-left-4 fade-in duration-300 ease-out overflow-hidden"
                 >
                     <div className="flex flex-col items-center justify-between gap-3 text-center">
@@ -90,7 +94,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                     >
                         <FolderOpen /> Open Folder
                     </button>
-                </div>
+                </motion.div>
             );
         }
 
@@ -99,7 +103,13 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
         }
 
         return (
-            <div className="space-y-0.5">
+            <motion.div
+                className="space-y-0.5"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
+            >
                 {displayedFiles.map((file) => (
                     <FileNode
                         key={file.path}
@@ -107,7 +117,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                         onFileClick={onFileClick}
                     />
                 ))}
-            </div>
+            </motion.div>
         );
     };
 
@@ -180,7 +190,13 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                             )}
 
                             {activeItem === "info" && (
-                                <div className="flex flex-col gap-4">
+                                <motion.div
+                                    className="flex flex-col gap-4"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
+                                >
                                     <div className="gap-1">
                                         <p className="text-neutral-500 text-xs uppercase font-bold">About Mello</p>
                                         <p className="text-white text-sm">Mello compiles directly to native C++ — no runtime interpreter, no virtual machine. Write readable, Python-like code and get the exact binary footprint of hand-written Arduino C++</p>
@@ -195,11 +211,17 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                         <p className="text-neutral-500 text-xs uppercase font-bold">Version</p>
                                         <p className="text-white text-sm">v0.1.1</p>
                                     </div>
-                                </div>
+                                </motion.div>
                             )}
 
                             {activeItem === "settings" && (
-                                <div className="p-3 text-sm">
+                                <motion.div
+                                    className="p-3 text-sm"
+                                    initial={{  opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
+                                >
                                     <div className="space-y-5">
 
                                         <div>
@@ -243,6 +265,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                                 <span className="text-neutral-300">Line Height</span>
                                                 <span className="font-mono text-[#a855f7]">{lineHeight}</span>
                                             </div>
+
                                             <input
                                                 type="range"
                                                 min="20"
@@ -273,7 +296,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </motion.div>
                             )}
                         </div>
                     </motion.div>
