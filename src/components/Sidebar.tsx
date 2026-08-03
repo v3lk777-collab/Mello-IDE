@@ -149,6 +149,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                 <div className="flex flex-col gap-4 w-full h-full overflow-hidden">
                                     <div className="relative shrink-0">
                                         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+
                                         <input
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -156,6 +157,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                             placeholder="Search in files..."
                                         />
                                     </div>
+
                                     <div className="flex-1 overflow-y-auto">
                                         {renderFilesList()}
                                     </div>

@@ -102,7 +102,7 @@ function SerialMonitor({ onClose, serialMonterActive } : serialMonitorProps) {
 
     return (
         <div
-            className={`${serialMonterActive ? '' : 'hidden'} flex flex-col h-full bg-[#080808] font-mono text-xs`}
+            className={`${serialMonterActive ? '' : 'hidden'} flex flex-col h-full bg-[#080808] font-mono text-xs max-h-[410px]`}
             style={{ 
                 height: `${height}px`,
                 background: '#000000',

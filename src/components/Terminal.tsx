@@ -61,7 +61,7 @@ function Terminal({ output, terminalIsActive, onClose, onClear } : TerminalProps
 
     return (
         <div 
-            className={`${terminalIsActive ? '' : 'hidden'} flex flex-col border-t border-white/10`}
+            className={`${terminalIsActive ? '' : 'hidden'} flex flex-col border-t border-white/10 max-h-[410px]`}
             style={{ 
                 height: `${height}px`,
                 background: '#000000',
