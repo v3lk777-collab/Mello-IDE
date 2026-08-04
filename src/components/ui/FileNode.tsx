@@ -34,7 +34,7 @@ function FileNode({ file, onFileClick, level = 0 }: { file: FileItem; onFileClic
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.75, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
             className="flex flex-col w-full"
         >
             <div 

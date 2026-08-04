@@ -36,7 +36,8 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                 }
 
                 beforeMount={(monaco) => {
-                    if (monaco.languages.getLanguages().some((lang: any) => lang.id === 'mello')) return; 
+                    if (monaco.languages.getLanguages().some((lang: any) => lang.id === 'mello'))
+                        return; 
 
                     monaco.languages.register({ id: 'mello' });
 

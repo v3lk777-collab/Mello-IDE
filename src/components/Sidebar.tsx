@@ -220,7 +220,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                     initial={{ opacity: 0, y: 8 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: 8 }}
-                                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                                    transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
                                 >
                                     <div className="space-y-6">
                                         <div className="flex flex-col gap-2.5 w-full group/fontSize">
