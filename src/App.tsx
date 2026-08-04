@@ -22,8 +22,8 @@ function App() {
   const [code, setCode] = useState<string>("");
   const [currentFilePath, setCurrentFilePath] = useState<string>("");
 
-  const [fontSize, setFontSize] = useLocalStorage("fontSize", 15);
-  const [lineHeight, setLineHeight] = useLocalStorage("lineHeight", 22);
+  const [fontSize, setFontSize] = useLocalStorage("fontSize", 14);
+  const [lineHeight, setLineHeight] = useLocalStorage("lineHeight", 20);
   const [fontFamily, setFontFamily] = useLocalStorage("fontFamily", "'Cascadia Code', monospace");
 
   const [theme, setTheme] = useLocalStorage("theme", "melloKids");
