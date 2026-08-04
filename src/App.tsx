@@ -155,11 +155,11 @@ function App() {
                         "Mello", 1500,
                         "Arduino", 1500,
                         "Speed", 1500,
-                        "Proformance", 1500,
+                        "Performance", 1500,
                       ]}
 
                       wrapper="span"
-                      speed={45}
+                      speed={30}
                       repeat={Infinity}
                       cursor
                       className="text-violet-400"
@@ -176,7 +176,7 @@ function App() {
                     ]}
 
                     wrapper="span"
-                    speed={45}
+                    speed={60}
                     repeat={Infinity}
                     cursor
                   />

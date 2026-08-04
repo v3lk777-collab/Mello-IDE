@@ -209,25 +209,24 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
 
                                     <div className="border-t border-white/5 pt-4 gap-1">
                                         <p className="text-neutral-500 text-xs uppercase font-bold">Version</p>
-                                        <p className="text-white text-sm">v0.1.1</p>
+                                        <p className="text-white text-sm">v0.1.2</p>
                                     </div>
                                 </motion.div>
                             )}
 
                             {activeItem === "settings" && (
                                 <motion.div
-                                    className="p-3 text-sm"
-                                    initial={{  opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
+                                    className="p-4 text-sm max-w-sm w-full mx-auto"
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 8 }}
+                                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                                 >
-                                    <div className="space-y-5">
-
-                                        <div>
-                                            <div className="flex justify-between items-center mb-1.5 px-1">
-                                                <span className="text-neutral-300">Font Size</span>
-                                                <span className="font-mono text-[#a855f7]">{fontSize}px</span>
+                                    <div className="space-y-6">
+                                        <div className="flex flex-col gap-2.5 w-full group/fontSize">
+                                            <div className="flex justify-between items-center text-xs font-medium text-neutral-500 group-hover/fontSize:text-neutral-400 transition-colors">
+                                                <span className="tracking-wide">Font Size</span>
+                                                <span className="text-neutral-300 font-mono bg-white/5 border border-white/4 px-1.5 py-0.5 rounded text-[11px]">{fontSize}px</span>
                                             </div>
 
                                             <input
@@ -237,33 +236,42 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                                 step="1"
                                                 value={fontSize}
                                                 onChange={(e) => onFontSizeChange?.(Number(e.target.value))}
-                                                className="w-full accent-[#a855f7]"
+                                                style={{
+                                                    background: `linear-gradient(to right, #a855f7 0%, #a855f7 ${((fontSize - 12) / (26 - 12)) * 100}%, #1f1f1f ${((fontSize - 12) / (26 - 12)) * 100}%, #1f1f1f 100%)`
+                                                }}
+                                                className="
+                                                    w-full h-1 rounded-full cursor-pointer appearance-none outline-none transition-all duration-200
+                                                    group-hover/fontSize:h-1.5
+
+                                                    [&::-webkit-slider-thumb]:appearance-none
+                                                    [&::-webkit-slider-thumb]:w-3
+                                                    [&::-webkit-slider-thumb]:h-3
+                                                    [&::-webkit-slider-thumb]:rounded-full
+                                                    [&::-webkit-slider-thumb]:bg-white
+                                                    [&::-webkit-slider-thumb]:shadow-[0_2px_6px_rgba(0,0,0,0.6)]
+                                                    [&::-webkit-slider-thumb]:transition-all
+                                                    [&::-webkit-slider-thumb]:duration-150
+                                                    group-hover/fontSize:[&::-webkit-slider-thumb]:w-4
+                                                    group-hover/fontSize:[&::-webkit-slider-thumb]:h-4
+                                                    [&::-webkit-slider-thumb]:active:scale-110
+
+                                                    [&::-moz-range-thumb]:w-3
+                                                    [&::-moz-range-thumb]:h-3
+                                                    [&::-moz-range-thumb]:border-0
+                                                    [&::-moz-range-thumb]:rounded-full
+                                                    [&::-moz-range-thumb]:bg-white
+                                                    [&::-moz-range-thumb]:shadow-[0_2px_6px_rgba(0,0,0,0.6)]
+                                                    [&::-moz-range-thumb]:transition-all
+                                                    group-hover/fontSize:[&::-moz-range-thumb]:w-4
+                                                    group-hover/fontSize:[&::-moz-range-thumb]:h-4
+                                                "
                                             />
                                         </div>
 
-                                        <div>
-                                            <span className="text-neutral-300 block mb-1.5 px-1">Font Family</span>
-                                            <div className="space-y-1">
-                                                {fonts.map((font) => (
-                                                    <button
-                                                        key={font.label}
-                                                        onClick={() => onFontFamilyChange?.(font.value)}
-                                                        className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors
-                                                            ${fontFamily === font.value
-                                                            ? "border-[#a855f7] bg-[#a855f7]/10 text-white"
-                                                            : "border-neutral-700 hover:bg-neutral-800 text-neutral-300"
-                                                        }`}
-                                                    >
-                                                        {font.label}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <div className="flex justify-between items-center mb-1.5 px-1">
-                                                <span className="text-neutral-300">Line Height</span>
-                                                <span className="font-mono text-[#a855f7]">{lineHeight}</span>
+                                        <div className="flex flex-col gap-2.5 w-full group/lineHeight">
+                                            <div className="flex justify-between items-center text-xs font-medium text-neutral-500 group-hover/lineHeight:text-neutral-400 transition-colors">
+                                                <span className="tracking-wide">Line Height</span>
+                                                <span className="text-neutral-300 font-mono bg-white/5 border border-white/4 px-1.5 py-0.5 rounded text-[11px]">{lineHeight}px</span>
                                             </div>
 
                                             <input
@@ -273,26 +281,87 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                                 step="1"
                                                 value={lineHeight}
                                                 onChange={(e) => onLineHeightChange?.(Number(e.target.value))}
-                                                className="w-full accent-[#a855f7]"
+                                                style={{
+                                                    background: `linear-gradient(to right, #a855f7 0%, #a855f7 ${((lineHeight - 20) / (34 - 20)) * 100}%, #1f1f1f ${((lineHeight - 20) / (34 - 20)) * 100}%, #1f1f1f 100%)`
+                                                }}
+                                                className="
+                                                    w-full h-1 rounded-full cursor-pointer appearance-none outline-none transition-all duration-200
+                                                    group-hover/lineHeight:h-1.5
+
+                                                    [&::-webkit-slider-thumb]:appearance-none
+                                                    [&::-webkit-slider-thumb]:w-3
+                                                    [&::-webkit-slider-thumb]:h-3
+                                                    [&::-webkit-slider-thumb]:rounded-full
+                                                    [&::-webkit-slider-thumb]:bg-white
+                                                    [&::-webkit-slider-thumb]:shadow-[0_2px_6px_rgba(0,0,0,0.6)]
+                                                    [&::-webkit-slider-thumb]:transition-all
+                                                    [&::-webkit-slider-thumb]:duration-150
+                                                    group-hover/lineHeight:[&::-webkit-slider-thumb]:w-4
+                                                    group-hover/lineHeight:[&::-webkit-slider-thumb]:h-4
+                                                    [&::-webkit-slider-thumb]:active:scale-110
+                                                    
+                                                    [&::-moz-range-thumb]:w-3
+                                                    [&::-moz-range-thumb]:h-3
+                                                    [&::-moz-range-thumb]:border-0
+                                                    [&::-moz-range-thumb]:rounded-full
+                                                    [&::-moz-range-thumb]:bg-white
+                                                    [&::-moz-range-thumb]:shadow-[0_2px_6px_rgba(0,0,0,0.6)]
+                                                    [&::-moz-range-thumb]:transition-all
+                                                    group-hover/lineHeight:[&::-moz-range-thumb]:w-4
+                                                    group-hover/lineHeight:[&::-moz-range-thumb]:h-4
+                                                "
                                             />
                                         </div>
 
-                                        <div>
-                                            <span className="text-neutral-300 block mb-1.5 px-1">Theme</span>
-                                            <div className="space-y-1">
-                                                {themes.map((t) => (
-                                                    <button
-                                                        key={t.label}
-                                                        onClick={() => onChangeTheme?.(t.value)}
-                                                        className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors
-                                                            ${theme === t.value
-                                                            ? "border-[#a855f7] bg-[#a855f7]/10 text-white"
-                                                            : "border-neutral-700 hover:bg-neutral-800 text-neutral-300"
-                                                        }`}
-                                                    >
-                                                        {t.label}
-                                                    </button>
-                                                ))}
+                                        <div className="flex flex-col gap-2 w-full">
+                                            <span className="text-xs font-medium text-neutral-500 tracking-wide px-0.5">Font Family</span>
+                                            <div className="flex flex-col bg-neutral-950 p-0.5 rounded-lg border border-white/4 relative w-full overflow-hidden">
+                                                {fonts.map((font) => {
+                                                    const isSelected = fontFamily === font.value;
+                                                    return (
+                                                        <button
+                                                            key={font.label}
+                                                            onClick={() => onFontFamilyChange?.(font.value)}
+                                                            className={`flex-1 px-2 py-1.5 rounded-md text-[11px] font-medium transition-colors duration-300 text-left truncate relative select-none z-10
+                                                                ${isSelected ? "text-white" : "text-neutral-500 hover:text-neutral-300"}`}
+                                                        >
+                                                            {isSelected && (
+                                                                <motion.div
+                                                                    layoutId="activeFontBg"
+                                                                    className="absolute inset-0 bg-[#a855f7] rounded-md shadow-[0_2px_6px_rgba(168,85,247,0.2)]"
+                                                                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                                                                />
+                                                            )}
+                                                            <span className="relative z-20">{font.label}</span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2 w-full">
+                                            <span className="text-xs font-medium text-neutral-500 tracking-wide px-0.5">Theme Layout</span>
+                                            <div className="flex bg-neutral-950 p-0.5 rounded-lg border border-white/4 relative w-full overflow-hidden">
+                                                {themes.map((t) => {
+                                                    const isSelected = theme === t.value;
+                                                    return (
+                                                        <button
+                                                            key={t.label}
+                                                            onClick={() => onChangeTheme?.(t.value)}
+                                                            className={`flex-1 px-2 py-1.5 rounded-md text-[11px] font-medium transition-colors duration-300 text-center truncate relative select-none z-10
+                                                                ${isSelected ? "text-white" : "text-neutral-500 hover:text-neutral-300"}`}
+                                                        >
+                                                            {isSelected && (
+                                                                <motion.div
+                                                                    layoutId="activeThemeBg"
+                                                                    className="absolute inset-0 bg-[#a855f7] rounded-md shadow-[0_2px_6px_rgba(168,85,247,0.2)]"
+                                                                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                                                                />
+                                                            )}
+                                                            <span className="relative z-20">{t.label}</span>
+                                                        </button>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     </div>

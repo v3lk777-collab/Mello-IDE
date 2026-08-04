@@ -142,6 +142,7 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
             
             <span className="text-xs font-bold">{isUploading ? "Uploading" : "Upload"}</span>
           </button>
+
           <div className="h-4 w-px bg-white/10" />
         </div>
 

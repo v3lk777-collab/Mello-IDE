@@ -31,7 +31,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                         className="flex flex-col w-full h-full items-center justify-center gap-1.5 p-4"
                     >
                         <span className="text-neutral-40">Loading...</span>
-                        <span className="text-xs text-neutral-600">Pls wait a minute</span>
+                        <span className="text-xs text-neutral-600">Pls wait a minute...</span>
                     </motion.div>
                 }
 

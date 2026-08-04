@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { invoke } from "@tauri-apps/api/core";
 import { FileCode, ChevronRight, Folder, FolderOpen } from "lucide-react";
 
@@ -29,7 +30,13 @@ function FileNode({ file, onFileClick, level = 0 }: { file: FileItem; onFileClic
     };
 
     return (
-        <div className="flex flex-col w-full">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.75, ease: [0.4, 0, 0.2, 1] }}
+            className="flex flex-col w-full"
+        >
             <div 
                 onClick={handleClick}
                 style={{ paddingLeft: `${(level * 12) + 6}px` }} 
@@ -38,18 +45,38 @@ function FileNode({ file, onFileClick, level = 0 }: { file: FileItem; onFileClic
                 {file.is_dir ? (
                     <ChevronRight 
                         size={14} 
-                        className={`text-neutral-500 transition-transform duration-200 shrink-0 ${isOpen ? "rotate-90" : ""}`} 
+                        className={`text-neutral-500 transition-transform duration-300 shrink-0 ${isOpen ? "rotate-90 text-[#a855f7]" : ""}`} 
                     />
                 ) : null}
 
                 {file.is_dir ? (
                     isOpen ? (
-                        <FolderOpen size={16} className="text-amber-400/90 shrink-0" />
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                        >
+                            <FolderOpen size={16} className="text-[#a855f7] shrink-0" />
+                        </motion.div>
                     ) : (
-                        <Folder size={16} className="text-amber-400/90 shrink-0" />
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                        >
+                            <Folder size={16} className="text-purple-500/80 shrink-0" />
+                        </motion.div>
                     )
                 ) : (
-                    <FileCode size={16} className="text-blue-400/80 group-hover:text-blue-400 transition-colors shrink-0" />
+                    <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.15 }}
+                    >
+                        <FileCode size={16} className="text-purple-400/70 group-hover:text-[#a855f7] transition-colors shrink-0" />
+                    </motion.div>
                 )}
                 
                 <span className="truncate select-none">{file.name}</span>
@@ -58,16 +85,16 @@ function FileNode({ file, onFileClick, level = 0 }: { file: FileItem; onFileClic
             {isOpen && children && children.length > 0 && (
                 <div className="flex flex-col w-full">
                     {children.map(child => (
-                        <FileNode 
-                            key={child.path} 
-                            file={child} 
-                            onFileClick={onFileClick} 
-                            level={level + 1} 
+                        <FileNode
+                            key={child.path}
+                            file={child}
+                            onFileClick={onFileClick}
+                            level={level + 1}
                         />
                     ))}
                 </div>
             )}
-        </div>
+        </motion.div>
     );
 }
 
