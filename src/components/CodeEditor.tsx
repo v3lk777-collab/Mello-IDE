@@ -1,6 +1,9 @@
-import Editor from '@monaco-editor/react';
+import { motion } from 'framer-motion';
+import Editor, { loader } from '@monaco-editor/react';
 import { editorThemes } from '../utils/themes';
 import { editor, Position } from 'monaco-editor';
+
+loader.config({ paths: { vs: '/monaco-editor/min/vs' } });
 
 interface CodeEditorProps {
     code: string;
@@ -18,7 +21,23 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                 width="100%"
                 height="100%"
                 theme={theme}
+
+                loading={
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
+                        className="flex flex-col w-full h-full items-center justify-center gap-1.5 p-4"
+                    >
+                        <span className="text-neutral-40">Loading...</span>
+                        <span className="text-xs text-neutral-600">Pls wait a minute</span>
+                    </motion.div>
+                }
+
                 beforeMount={(monaco) => {
+                    if (monaco.languages.getLanguages().some((lang: any) => lang.id === 'mello')) return; 
+
                     monaco.languages.register({ id: 'mello' });
 
                     monaco.languages.setMonarchTokensProvider('mello', {
@@ -200,9 +219,11 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                         monaco.editor.defineTheme(themeName, themeData);
                     });
                 }}
+
                 language="mello"
                 value={code}
                 onChange={(value) => onChange(value ?? "")}
+
                 options={{
                     minimap: { enabled: true },
                     fontSize: fontSize,
@@ -220,10 +241,30 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                     renderLineHighlight: "all",
                     roundedSelection: false,
                     scrollBeyondLastLine: false,
-                    bracketPairColorization: { enabled: true, independentColorPoolPerBracketType: true },
-                    guides: { indentation: true, bracketPairs: "active", highlightActiveIndentation: true },
-                    suggest: { showKeywords: true, preview: true, snippetsPreventQuickSuggestions: false },
-                    quickSuggestions: { other: true, comments: false, strings: false },
+
+                    bracketPairColorization: {
+                        enabled: true,
+                        independentColorPoolPerBracketType: true
+                    },
+
+                    guides: {
+                        indentation: true,
+                        bracketPairs: "active",
+                        highlightActiveIndentation: true
+                    },
+
+                    suggest: {
+                        showKeywords: true,
+                        preview: true,
+                        snippetsPreventQuickSuggestions: false
+                    },
+
+                    quickSuggestions: {
+                        other: true,
+                        comments: false,
+                        strings: false
+                    },
+
                     wordBasedSuggestions: "off",
                     snippetSuggestions: "top",
                     tabCompletion: "on",
@@ -231,6 +272,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                     occurrencesHighlight: "singleFile",
                     renderWhitespace: "none",
                     overviewRulerLanes: 0,
+
                     scrollbar: {
                         verticalScrollbarSize: 8,
                         horizontalScrollbarSize: 8,

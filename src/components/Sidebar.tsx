@@ -156,7 +156,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                         initial={{ width: 0, opacity: 0 }}
                         animate={{ width: 256, opacity: 1 }}
                         exit={{ width: 0, opacity: 0 }}
-                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                        transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
                         className="bg-black border-r border-white/5 flex flex-col overflow-hidden"
                     >
                         <div className="w-64 p-4 h-full flex flex-col">
