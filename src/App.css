@@ -2,18 +2,66 @@
 
 *[data-tauri-drag-region] {
   app-region: drag;
-
   -webkit-user-select: none;
-
   user-select: none;
 }
 
-@theme {
-  --background: #000000;
+:root {
+  --background: #000;
+  --foreground: #fff;
+
+  --card: #0d0d0d;
+  --card-foreground: #fff;
+
+  --popover: #0d0d0d;
+  --popover-foreground: #fff;
+
+  --primary: #a855f7;
+  --primary-foreground: #fff;
+
+  --secondary: #1a1a1a;
+  --secondary-foreground: #fff;
+
+  --muted: #1a1a1a;
+  --muted-foreground: #a3a3a3;
+
+  --accent: #1a1a1a;
+  --accent-foreground: #fff;
+
+  --border: rgba(255,255,255,.1);
+  --input: rgba(255,255,255,.1);
+  --ring: #a855f7;
+
+  --radius: .5rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius: var(--radius);
 }
 
 @layer base {
   body {
-    @apply bg-black text-white;
+    @apply bg-background text-foreground;
+  }
+
+  * {
+    @apply border-border;
   }
 }

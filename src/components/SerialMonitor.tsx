@@ -1,17 +1,28 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { LucideRefreshCw, Plug, PlugZap, Send, ChevronDown, ListX, X } from "lucide-react";
+import { LucideRefreshCw, Plug, PlugZap, Send, ListX, X } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const BAUD_OPTIONS = [
+    "300",
+    "1200",
+    "2400",
+    "4800",
+    "9600",
+    "19200",
+    "38400",
+    "57600",
+    "115200",
+];
 
 interface serialMonitorProps {
     onClose: () => void;
     serialMonterActive: boolean;
 }
 
-const BAUD_RATES = [300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200];
-
-function SerialMonitor({ onClose, serialMonterActive } : serialMonitorProps) {
-    const [baud, setBaud]  = useState(9600);
+function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
+    const [baud, setBaud] = useState(9600);
     const [selectedPort, setPort] = useState("");
     const [ports, setPorts] = useState<string[]>([]);
     const [connected, setConnected] = useState(false);
@@ -71,19 +82,19 @@ function SerialMonitor({ onClose, serialMonterActive } : serialMonitorProps) {
     const startResizing = useCallback(() => {
         setIsResizing(true);
     }, []);
-    
+
     const stopResizing = useCallback(() => {
         setIsResizing(false);
     }, []);
-    
+
     useEffect(() => {
         const handleMouseMove = (e: any) => {
             if (!isResizing) {
                 return;
             }
-            
+
             const newHeight = window.innerHeight - e.clientY;
-            
+
             if (newHeight > 100 && newHeight < 500) {
                 setHeight(newHeight);
             }
@@ -102,8 +113,8 @@ function SerialMonitor({ onClose, serialMonterActive } : serialMonitorProps) {
 
     return (
         <div
-            className={`${serialMonterActive ? '' : 'hidden'} flex flex-col h-full bg-[#080808] font-mono text-xs max-h-[410px]`}
-            style={{ 
+            className={`${serialMonterActive ? '' : 'hidden'} flex flex-col h-full bg-[#080808] font-mono text-xs max-h-102.5`}
+            style={{
                 height: `${height}px`,
                 background: '#000000',
             }}
@@ -116,37 +127,53 @@ function SerialMonitor({ onClose, serialMonterActive } : serialMonitorProps) {
                     background: '#000000'
                 }}
             >
-                <div className="relative">
-                    <select
-                        value={selectedPort}
-                        onChange={e => setPort(e.target.value)}
-                        disabled={connected}
-                        className="appearance-none bg-[#1a1a1a] border border-white/10 text-neutral-300 rounded px-2 py-1 pr-6 text-xs focus:outline-none focus:border-purple-500/50 disabled:opacity-40"
-                    >
-                        {ports.length === 0
-                            ? <option>No ports</option>
-                            : ports.map(p => <option key={p}>{p}</option>)
-                        }
-                    </select>
-                    <ChevronDown size={10} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none" />
-                </div>
+                <Select
+                    value={selectedPort}
+                    onValueChange={setPort}
+                    disabled={connected}
+                >
+                    <SelectTrigger className="w-40">
+                        <SelectValue placeholder="No ports" />
+                    </SelectTrigger>
 
-                <div className="relative">
-                    <select
-                        value={baud}
-                        onChange={e => setBaud(Number(e.target.value))}
-                        disabled={connected}
-                        className="appearance-none bg-[#1a1a1a] border border-white/10 text-neutral-300 rounded px-2 py-1 pr-6 text-xs focus:outline-none focus:border-purple-500/50 disabled:opacity-40"
-                    >
-                        {BAUD_RATES.map(baudRate =>
-                            <option
-                                key={baudRate}
-                                value={baudRate}
-                            >{baudRate}</option>
+                    <SelectContent>
+                        {ports.length === 0 ? (
+                            <SelectItem value="none" disabled>
+                                No ports
+                            </SelectItem>
+                        ) : (
+                            ports.map((port) => (
+                                <SelectItem
+                                    key={port}
+                                    value={port}
+                                >
+                                    {port}
+                                </SelectItem>
+                            ))
                         )}
-                    </select>
-                    <ChevronDown size={10} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none" />
-                </div>
+                    </SelectContent>
+                </Select>
+
+                <Select
+                    value={String(baud)}
+                    onValueChange={(value) => setBaud(Number(value))}
+                    disabled={connected}
+                >
+                    <SelectTrigger className="w-32">
+                        <SelectValue />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                        {BAUD_OPTIONS.map((rate) => (
+                            <SelectItem
+                                key={rate}
+                                value={rate}
+                            >
+                                {rate}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
 
                 <button
                     onClick={refreshPorts}
@@ -161,11 +188,10 @@ function SerialMonitor({ onClose, serialMonterActive } : serialMonitorProps) {
 
                 <button
                     onClick={connected ? disconnect : connect}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium transition-all ${
-                        connected
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium transition-all ${connected
                         ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
                         : 'bg-purple-500/10 text-purple-400 hover:bg-purple-500/20'
-                    }`}
+                        }`}
                 >
                     {connected ? <PlugZap size={11} /> : <Plug size={11} />}
                     {connected ? 'Disconnect' : 'Connect'}
@@ -189,7 +215,7 @@ function SerialMonitor({ onClose, serialMonterActive } : serialMonitorProps) {
                 >
                     <ListX size={12} />
                 </button>
-                
+
                 <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.07)' }} />
 
                 <button
@@ -220,15 +246,15 @@ function SerialMonitor({ onClose, serialMonterActive } : serialMonitorProps) {
                     </div>
                 ) : (
                     output.map((line, i) => {
-                        const isSent  = line.startsWith('> ');
+                        const isSent = line.startsWith('> ');
                         const isError = /error/i.test(line);
                         return (
                             <div key={i} className="flex gap-3">
                                 <span className="text-neutral-800 select-none w-5 text-right shrink-0">{i + 1}</span>
                                 <span className={
-                                    isSent  ? 'text-blue-400' :
-                                    isError ? 'text-red-400'  :
-                                    'text-green-400'
+                                    isSent ? 'text-blue-400' :
+                                        isError ? 'text-red-400' :
+                                            'text-green-400'
                                 }>
                                     {isSent ? '' : '› '}{line}
                                 </span>
@@ -240,7 +266,7 @@ function SerialMonitor({ onClose, serialMonterActive } : serialMonitorProps) {
             </div>
 
             <div
-                className="flex items-center gap-2 px-3 py-2 bg-[#000000] border-t border-white/5 shrink-0"
+                className="flex items-center gap-2 px-3 py-2 bg-background border-t border-white/5 shrink-0"
             >
                 <span className="text-neutral-700 select-none">›</span>
 

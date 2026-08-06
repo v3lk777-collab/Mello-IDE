@@ -1,10 +1,17 @@
 import { useState, useEffect } from 'react';
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { Minus, Maximize, Minimize, X, Play, Upload, Terminal as TerminalIcon, Loader2, Activity, Cpu, ChevronDown } from 'lucide-react';
+import { Select,  SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Minus, Maximize, Minimize, X, Play, Upload, Terminal as TerminalIcon, Loader2, Activity } from 'lucide-react';
 
-const arduinoSupportedBoards = [
-  { label: "Arduino UNO", value: "uno" },
-  { label: "Arduino Nano", value: "nano" }
+const BOARD_OPTIONS = [
+  {
+    value: "uno",
+    label: "Arduino Uno",
+  },
+  {
+    value: "nano",
+    label: "Arduino Nano",
+  },
 ];
 
 interface TitlebarProps {
@@ -118,21 +125,25 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn }: Title
       </div>
 
       <div className="flex items-center">
-        <div className="relative flex items-center">
-          <Cpu size={14} className="pointer-events-none absolute left-3 text-neutral-500" />
+        <Select
+          value={board}
+          onValueChange={setBoard}
+        >
+          <SelectTrigger className="w-40">
+            <SelectValue />
+          </SelectTrigger>
 
-          <select
-            value={board}
-            onChange={(e) => setBoard(e.target.value)}
-            className="h-8 appearance-none rounded-md border border-white/10 bg-black pl-8 pr-9 text-xs font-medium text-neutral-200 transition-all duration-200 hover:border-white/20 hover:bg-white/5 focus:border-[#a855f7]/50 focus:ring-2 focus:ring-[#a855f7]/15 focus:outline-none cursor-pointer"
-          >
-            {arduinoSupportedBoards.map((board) => (
-              <option key={board.value} value={board.value}>{board.label}</option>
+          <SelectContent>
+            {BOARD_OPTIONS.map((board) => (
+              <SelectItem
+                key={board.value}
+                value={board.value}
+              >
+                {board.label}
+              </SelectItem>
             ))}
-          </select>
-
-          <ChevronDown size={14} className="pointer-events-none absolute right-3 text-neutral-500" />
-        </div>
+          </SelectContent>
+        </Select>
 
         <div className="flex items-center px-4 gap-1.5">
           <button

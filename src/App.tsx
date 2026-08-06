@@ -120,7 +120,7 @@ function App() {
         />
       </div>
 
-      <div className="flex flex-1 w-full overflow-hidden">
+      <div className="flex flex-1 w-full">
         <Sidebar
           onFolderOpen={onFolderOpen}
           onFileClick={onFileClick}
