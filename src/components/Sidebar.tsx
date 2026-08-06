@@ -236,9 +236,11 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                                 step="1"
                                                 value={fontSize}
                                                 onChange={(e) => onFontSizeChange?.(Number(e.target.value))}
+
                                                 style={{
                                                     background: `linear-gradient(to right, #a855f7 0%, #a855f7 ${((fontSize - 12) / (26 - 12)) * 100}%, #1f1f1f ${((fontSize - 12) / (26 - 12)) * 100}%, #1f1f1f 100%)`
                                                 }}
+
                                                 className="
                                                     w-full h-1 rounded-full cursor-pointer appearance-none outline-none transition-all duration-200
                                                     group-hover/fontSize:h-1.5

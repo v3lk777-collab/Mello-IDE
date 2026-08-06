@@ -1,7 +1,8 @@
 import "./App.css";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { TypeAnimation } from "react-type-animation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocalStorage } from "./hooks/useLocalStorage";
@@ -14,8 +15,6 @@ import SerialMonitor from "./components/SerialMonitor";
 
 interface CompileResult {
   success: boolean;
-  output: string;
-  error: string;
 }
 
 function App() {
@@ -49,35 +48,57 @@ function App() {
     setCurrentFilePath(path);
   };
 
-  const runResult = (result: CompileResult) => {
-    const lines = (result.success ? result.output : result.error).split("\n").filter(Boolean);
+  useEffect(() => {
+    let isActive = true;
+    let unlistenFn: (() => void) | undefined;
 
-    setTerminalOutput((prev) => [...prev, ...lines]);
-    setTerminalActive(true);
-  };
+    listen<string>("compile_output", (event) => {
+      setTerminalOutput((prev) => [...prev, event.payload]);
+    }).then((fn) => {
+      if (isActive) {
+        unlistenFn = fn;
+      } else {
+        fn();
+      }
+    });
 
-  const onVerify = async () => {
+    return () => {
+      isActive = false;
+      unlistenFn?.();
+    };
+  }, []);
+
+
+  const onVerify = async (board: string) => {
     setTerminalActive(true);
     setCurrentTab("terminal");
     setTerminalOutput([]);
 
-    if (!currentFilePath) return;
+    if (!currentFilePath) {
+      return;
+    }
 
     await invoke("save_file_content", { path: currentFilePath, content: code });
-    const result = await invoke<CompileResult>("verify_code", { sourcePath: currentFilePath });
-    runResult(result);
+    await invoke<CompileResult>("verify_code", {
+      sourcePath: currentFilePath,
+      board: board
+    });
   };
 
-  const onUpload = async () => {
+  const onUpload = async (board: string) => {
     setTerminalActive(true);
     setCurrentTab("terminal");
     setTerminalOutput([]);
 
-    if (!currentFilePath) return;
+    if (!currentFilePath) {
+      return;
+    }
 
     await invoke("save_file_content", { path: currentFilePath, content: code });
-    const result = await invoke<CompileResult>("upload_code", { sourcePath: currentFilePath });
-    runResult(result);
+    await invoke<CompileResult>("upload_code", {
+      sourcePath: currentFilePath,
+      board: board
+    });
   };
 
   return (

@@ -1,8 +1,9 @@
 use serde::Serialize;
+use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
-use std::process::Command;
+use std::process::{Command, Stdio};
 use tauri::path::BaseDirectory;
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 
 #[cfg(target_os = "windows")]
 use std::os::windows::process::CommandExt;
@@ -22,11 +23,9 @@ fn resolve_compiler_path(app: &AppHandle) -> Result<PathBuf, String> {
 #[derive(Serialize)]
 pub struct CompileResult {
     success: bool,
-    output: String,
-    error: String,
 }
 
-fn run_mello(app: &AppHandle, source_path: &str, upload: bool) -> Result<CompileResult, String> {
+fn run_mello(app: &AppHandle, source_path: &str, board: &str, upload: bool) -> Result<CompileResult, String> {
     let compiler_path = resolve_compiler_path(app)?;
     let compiler_dir = compiler_path
         .parent()
@@ -34,7 +33,9 @@ fn run_mello(app: &AppHandle, source_path: &str, upload: bool) -> Result<Compile
 
     let mut cmd = Command::new(&compiler_path);
     cmd.current_dir(compiler_dir);
+
     cmd.arg(source_path);
+    cmd.arg(board);
 
     if upload {
         cmd.arg("--upload");
@@ -43,28 +44,53 @@ fn run_mello(app: &AppHandle, source_path: &str, upload: bool) -> Result<Compile
     #[cfg(target_os = "windows")]
     cmd.creation_flags(0x08000000);
 
-    let output = cmd.output().map_err(|e| e.to_string())?;
+    cmd.stdout(Stdio::piped());
+    cmd.stderr(Stdio::piped());
+
+    let mut child = cmd.spawn().map_err(|e| e.to_string())?;
+
+    let stdout = child.stdout.take().ok_or("Failed to capture stdout")?;
+    let stderr = child.stderr.take().ok_or("Failed to capture stderr")?;
+
+    let app_stdout = app.clone();
+    let stdout_handle = std::thread::spawn(move || {
+        let reader = BufReader::new(stdout);
+        for line in reader.lines().flatten() {
+            let _ = app_stdout.emit("compile_output", line);
+        }
+    });
+
+    let app_stderr = app.clone();
+    let stderr_handle = std::thread::spawn(move || {
+        let reader = BufReader::new(stderr);
+        for line in reader.lines().flatten() {
+            let _ = app_stderr.emit("compile_output", line);
+        }
+    });
+
+    let status = child.wait().map_err(|e| e.to_string())?;
+
+    let _ = stdout_handle.join();
+    let _ = stderr_handle.join();
 
     Ok(CompileResult {
-        success: output.status.success(),
-        output: String::from_utf8_lossy(&output.stdout).to_string(),
-        error: String::from_utf8_lossy(&output.stderr).to_string(),
+        success: status.success(),
     })
 }
 
 #[tauri::command]
-pub async fn verify_code(app: AppHandle, source_path: String) -> Result<CompileResult, String> {
+pub async fn verify_code(app: AppHandle, source_path: String, board: String) -> Result<CompileResult, String> {
     tauri::async_runtime::spawn_blocking(move || {
-        run_mello(&app, &source_path, false)
+        run_mello(&app, &source_path, &board, false)
     })
     .await
     .map_err(|e| e.to_string())?
 }
 
 #[tauri::command]
-pub async fn upload_code(app: AppHandle, source_path: String) -> Result<CompileResult, String> {
+pub async fn upload_code(app: AppHandle, source_path: String, board: String) -> Result<CompileResult, String> {
     tauri::async_runtime::spawn_blocking(move || {
-        run_mello(&app, &source_path, true)
+        run_mello(&app, &source_path, &board, true)
     })
     .await
     .map_err(|e| e.to_string())?

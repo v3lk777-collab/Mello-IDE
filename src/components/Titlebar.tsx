@@ -1,27 +1,34 @@
 import { useState, useEffect } from 'react';
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { Minus, Maximize, Minimize, X, Play, Upload, Terminal as TerminalIcon, Loader2, Activity } from 'lucide-react';
+import { Minus, Maximize, Minimize, X, Play, Upload, Terminal as TerminalIcon, Loader2, Activity, Cpu, ChevronDown } from 'lucide-react';
+
+const arduinoSupportedBoards = [
+  { label: "Arduino UNO", value: "uno" },
+  { label: "Arduino Nano", value: "nano" }
+];
 
 interface TitlebarProps {
-  onVerify: () => Promise<void> | void;
-  onUpload: () => Promise<void> | void;
   isTerminalOn: () => void;
   isSerialMonitorOn: () => void;
+  onVerify: (board: string) => Promise<void> | void;
+  onUpload: (board: string) => Promise<void> | void;
 }
 
 const appWindow = getCurrentWindow();
 
-function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : TitlebarProps) {
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [isMaximized, setIsMaximized] = useState(false);
+function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn }: TitlebarProps) {
+  const [board, setBoard] = useState<string>("uno");
+
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isMaximized, setIsMaximized] = useState<boolean>(false);
 
   const handleVerifyClick = async () => {
     setIsVerifying(true);
 
     try {
       if (onVerify) {
-        await onVerify(); 
+        await onVerify(board);
       }
     } catch (error) {
       console.error(error);
@@ -35,7 +42,7 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
 
     try {
       if (onUpload) {
-        await onUpload(); 
+        await onUpload(board);
       }
     } catch (error) {
       console.error(error);
@@ -80,18 +87,18 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
   }
 
   return (
-    <div 
-      data-tauri-drag-region 
+    <div
+      data-tauri-drag-region
       className="h-9 w-full bg-black backdrop-blur-md border-b border-white/10 flex items-center justify-between select-none pl-4 pr-2"
     >
       <div className="flex items-center gap-2">
         <span
           className="text-sm font-semibold tracking-wide text-neutral-300"
         > Mello IDE </span>
-        
-        <div className="h-4 w-px bg-white/10"/>
 
-        <div className = "flex gap-1">
+        <div className="h-4 w-px bg-white/10" />
+
+        <div className="flex gap-1">
           <button
             title="Terminal"
             onClick={isTerminalOn}
@@ -111,6 +118,22 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
       </div>
 
       <div className="flex items-center">
+        <div className="relative flex items-center">
+          <Cpu size={14} className="pointer-events-none absolute left-3 text-neutral-500" />
+
+          <select
+            value={board}
+            onChange={(e) => setBoard(e.target.value)}
+            className="h-8 appearance-none rounded-md border border-white/10 bg-black pl-8 pr-9 text-xs font-medium text-neutral-200 transition-all duration-200 hover:border-white/20 hover:bg-white/5 focus:border-[#a855f7]/50 focus:ring-2 focus:ring-[#a855f7]/15 focus:outline-none cursor-pointer"
+          >
+            {arduinoSupportedBoards.map((board) => (
+              <option key={board.value} value={board.value}>{board.label}</option>
+            ))}
+          </select>
+
+          <ChevronDown size={14} className="pointer-events-none absolute right-3 text-neutral-500" />
+        </div>
+
         <div className="flex items-center px-4 gap-1.5">
           <button
             title="Verify"
@@ -139,7 +162,7 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn } : Titl
             ) : (
               <Upload size={16} />
             )}
-            
+
             <span className="text-xs font-bold">{isUploading ? "Uploading" : "Upload"}</span>
           </button>
 
