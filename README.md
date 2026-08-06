@@ -32,6 +32,8 @@ Built with **Tauri**, **Rust**, and **React + TypeScript**.
 - **Animated UI** — panel open/close (sidebar, terminal, serial monitor) and view transitions are handled with Framer Motion instead of abrupt show/hide
 - **Custom window chrome** — draggable titlebar with minimize/maximize/close, built on Tauri's window APIs
 
+---
+
 ## Tech Stack
 
 **Frontend**
@@ -48,36 +50,7 @@ Built with **Tauri**, **Rust**, and **React + TypeScript**.
 - `serde` for serialization
 - The Mello compiler binary, bundled as a Tauri resource and invoked as a subprocess
 
-## Project Structure
-
-```
-mello-ide/
-├── src/                           # React frontend
-│   ├── App.tsx                    # App shell, state, and layout
-│   ├── components/
-│   │   ├── Titlebar.tsx           # Custom window bar (Verify/Upload/Terminal/Serial toggles)
-│   │   ├── Sidebar.tsx            # File explorer, search, info, and settings panels
-│   │   ├── CodeEditor.tsx         # Monaco editor + Mello language/theme/autocomplete
-│   │   ├── Terminal.tsx           # Compiler output panel
-│   │   ├── SerialMonitor.tsx      # Serial port connection & live data panel
-│   │   └── ui/FileNode.tsx        # Recursive file/folder tree node
-│   ├── hooks/
-│   │   └── useLocalStorage.ts     # Persisted state (font settings, theme)
-│   ├── utils/
-│   │   └── themes.ts              # Monaco theme definitions (melloKids, girls)
-│   └── main.tsx
-└── src-tauri/
-    ├── src/
-    │   ├── main.rs
-    │   ├── lib.rs                  # Tauri builder, plugins, managed state, command registry
-    │   ├── state.rs                # SerialState, ProjectState
-    │   └── commands/
-    │       ├── fs.rs               # initialize_project, get_directory_files, read/save file
-    │       ├── compiler.rs         # verify_code, upload_code (shells out to the Mello compiler)
-    │       ├── serial.rs           # list_ports, open/close_serial, send_serial
-    │       └── window_commands.rs  # close_splashscreen (splash → main window handoff)
-    └── ...
-```
+---
 
 ## Tauri Commands
 
@@ -95,11 +68,15 @@ mello-ide/
 | `send_serial` | Sends a message over the open serial connection |
 | `close_splashscreen` | Closes the splash window and reveals the main window once the app is ready |
 
+---
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) and a package manager (npm/pnpm/yarn)
 - [Rust](https://www.rust-lang.org/tools/install) and the [Tauri CLI](https://tauri.app/start/prerequisites/)
 - The Mello compiler binary and its bundled tools (`arduino-cli`, `clang-format`), packaged under `src-tauri/resources` and resolved at runtime via Tauri's resource directory — no manual path setup needed
+
+---
 
 ## Getting Started
 
@@ -114,6 +91,8 @@ npm run tauri dev
 npm run tauri build
 ```
 
+---
+
 ## Mello Language Quick Example
 
 ```
@@ -125,6 +104,8 @@ loop:
 ```
 
 Mello source compiles down to native Arduino C++ (`-O3 -flto`, targeting `arduino:avr:uno` by default) with no interpreter or runtime layer.
+
+---
 
 ## License
 
