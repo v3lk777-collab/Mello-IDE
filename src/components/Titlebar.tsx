@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { Select,  SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Minus, Maximize, Minimize, X, Play, Upload, Terminal as TerminalIcon, Loader2, Activity } from 'lucide-react';
@@ -24,7 +25,7 @@ interface TitlebarProps {
 const appWindow = getCurrentWindow();
 
 function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn }: TitlebarProps) {
-  const [board, setBoard] = useState<string>("uno");
+  const [board, setBoard] = useLocalStorage("boardType", "uno");
 
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);

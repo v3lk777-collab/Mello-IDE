@@ -2,7 +2,7 @@ use crate::state::{OpenSerial, SerialState};
 use std::io::{Read, Write};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 use tauri::{AppHandle, Emitter, State};
 
 #[tauri::command]
@@ -19,7 +19,7 @@ pub fn open_serial(
     state: State<SerialState>,
 ) -> Result<(), String> {
     let serial = serialport::new(&port, baud)
-        .timeout(Duration::from_millis(50))
+        .timeout(Duration::from_millis(200))
         .open()
         .map_err(|e| e.to_string())?;
 
@@ -37,6 +37,9 @@ pub fn open_serial(
 
     std::thread::spawn(move || {
         let mut buf = [0u8; 256];
+        let mut pending = String::new();
+        let mut last_data_at = Instant::now();
+
         loop {
             if stop_reader_thread.load(Ordering::Relaxed) {
                 break;
@@ -44,15 +47,40 @@ pub fn open_serial(
 
             match reader.read(&mut buf) {
                 Ok(n) if n > 0 => {
-                    let data = String::from_utf8_lossy(&buf[..n]).to_string();
-                    if app.emit("serial_data", data).is_err() {
-                        break;
+                    pending.push_str(&String::from_utf8_lossy(&buf[..n]));
+                    last_data_at = Instant::now();
+
+                    while let Some(pos) = pending.find('\n') {
+                        let line = pending[..pos].trim_end_matches('\r').to_string();
+
+                        if app.emit("serial_data", line).is_err() {
+                            return;
+                        }
+
+
+                        pending.drain(..=pos);
                     }
                 }
                 Ok(_) => {}
-                Err(ref e) if e.kind() == std::io::ErrorKind::TimedOut => {}
+
+                Err(ref e) if e.kind() == std::io::ErrorKind::TimedOut => {
+                    if !pending.is_empty() && last_data_at.elapsed() >= Duration::from_millis(300) {
+                        if app.emit("serial_data", pending.trim_end_matches('\r').to_string()).is_err() {
+                            return;
+                        }
+
+                        pending.clear();
+                    }
+
+                    continue;
+                }
+
                 Err(_) => break,
             }
+        }
+
+        if !pending.is_empty() {
+            let _ = app.emit("serial_data", pending.trim_end_matches('\r').to_string());
         }
     });
 

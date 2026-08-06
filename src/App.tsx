@@ -86,6 +86,9 @@ function App() {
   };
 
   const onUpload = async (board: string) => {
+    await invoke("close_serial").catch(() => {});
+    setSerialMonitorActive(false);
+
     setTerminalActive(true);
     setCurrentTab("terminal");
     setTerminalOutput([]);

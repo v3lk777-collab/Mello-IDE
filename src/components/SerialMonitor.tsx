@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { LucideRefreshCw, Plug, PlugZap, Send, ListX, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -44,7 +45,15 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
         if (list.length > 0 && !selectedPort) setPort(list[0]);
     };
 
-    useEffect(() => { refreshPorts(); }, []);
+    useEffect(() => {
+        if (!serialMonterActive && connected) {
+            disconnect();
+        }
+    }, [serialMonterActive, connected]);
+
+    useEffect(() => {
+        refreshPorts(); 
+    }, []);
 
     useEffect(() => {
         if (autoScroll) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -55,8 +64,7 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
             await invoke("open_serial", { port: selectedPort, baud });
 
             const unlisten = await listen<string>("serial_data", (event) => {
-                const lines = event.payload.split("\n").filter(l => l.trim());
-                setOutput(prev => [...prev, ...lines]);
+                setOutput(prev => [...prev, event.payload]);
             });
 
             unlistenRef.current = unlisten;
@@ -74,9 +82,14 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
 
     const sendMessage = async () => {
         if (!input.trim() || !connected) return;
-        await invoke("send_serial", { message: input + "\n" });
-        setOutput(prev => [...prev, `> ${input}`]);
-        setInput("");
+
+        try {
+            await invoke("send_serial", { message: input + "\n" });
+            setOutput(prev => [...prev, `> ${input}`]);
+            setInput("");
+        } catch (e) {
+            setOutput(prev => [...prev, `[Error] ${e}`]);
+        }
     };
 
     const startResizing = useCallback(() => {
@@ -219,17 +232,27 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
                 <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.07)' }} />
 
                 <button
-                    onClick={onClose}
+                    onClick={() => {
+                        if (connected) {
+                            disconnect();
+                        }
+
+                        onClose();
+                    }}
+
                     className="p-1.5 rounded transition-all"
                     style={{ color: '#555' }}
+
                     onMouseEnter={e => {
                         e.currentTarget.style.color = '#ff5f5f';
                         e.currentTarget.style.background = 'rgba(255,95,95,0.08)';
                     }}
+
                     onMouseLeave={e => {
                         e.currentTarget.style.color = '#555';
                         e.currentTarget.style.background = 'transparent';
                     }}
+
                     title="Close Serial Monitor"
                 >
                     <X size={12} />
