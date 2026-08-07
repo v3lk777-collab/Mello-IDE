@@ -1,8 +1,8 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-
 import { useState, useEffect, useRef, useCallback } from "react";
-import { LucideRefreshCw, Plug, PlugZap, Send, ListX, X } from "lucide-react";
+
+import { LucideRefreshCw, Send, ListX, X, CopyCheck, Copy } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const BAUD_OPTIONS = [
@@ -14,7 +14,7 @@ const BAUD_OPTIONS = [
     "19200",
     "38400",
     "57600",
-    "115200",
+    "115200"
 ];
 
 interface serialMonitorProps {
@@ -28,6 +28,8 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
     const [ports, setPorts] = useState<string[]>([]);
     const [connected, setConnected] = useState(false);
 
+    const [isCopied, setIsCopied] = useState<boolean>(false);
+
     const [input, setInput] = useState("");
     const [output, setOutput] = useState<string[]>([]);
 
@@ -39,28 +41,48 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
     const bottomRef = useRef<HTMLDivElement>(null);
     const unlistenRef = useRef<(() => void) | null>(null);
 
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(output.join("\n"));
+
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 1000);
+        } catch {
+            setOutput(prev => [...prev, "[Error] Couldn't copy the output to the clipboard"]);
+        }
+    }
+
     const refreshPorts = async () => {
         const list = await invoke<string[]>("list_ports");
         setPorts(list);
-        if (list.length > 0 && !selectedPort) setPort(list[0]);
+
+        if (list.length > 0 && !selectedPort) {
+            setPort(list[0]);
+        }
     };
 
-    useEffect(() => {
-        if (!serialMonterActive && connected) {
-            disconnect();
+    const disconnect = useCallback(async () => {
+        try {
+            await invoke("close_serial");
+        } catch (e) {
+            setOutput(prev => [...prev, `[Error] ${e}`]);
         }
-    }, [serialMonterActive, connected]);
 
-    useEffect(() => {
-        refreshPorts(); 
+        if (unlistenRef.current) {
+            unlistenRef.current();
+            unlistenRef.current = null;
+        }
+
+        setConnected(false);
     }, []);
 
-    useEffect(() => {
-        if (autoScroll) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [output]);
+    const connect = useCallback(async () => {
+        if (!selectedPort) {
+            return;
+        }
 
-    const connect = async () => {
         try {
+            await disconnect();
             await invoke("open_serial", { port: selectedPort, baud });
 
             const unlisten = await listen<string>("serial_data", (event) => {
@@ -71,14 +93,51 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
             setConnected(true);
         } catch (e) {
             setOutput(prev => [...prev, `[Error] ${e}`]);
+            setConnected(false);
         }
-    };
+    }, [selectedPort, baud, disconnect]);
 
-    const disconnect = async () => {
-        await invoke("close_serial");
-        unlistenRef.current?.();
-        setConnected(false);
-    };
+    useEffect(() => {
+        refreshPorts();
+
+        const intervalId = setInterval(async () => {
+            const list = await invoke<string[]>("list_ports");
+            setPorts(list);
+
+            if (connected && selectedPort && !list.includes(selectedPort)) {
+                setOutput(prev => [...prev, "[Error] Device disconnected"]);
+                await disconnect();
+                setPort("");
+                return;
+            }
+
+            if (list.length > 0 && !connected && !selectedPort) {
+                setPort(list[0]);
+            }
+        }, 500);
+
+        return () => clearInterval(intervalId);
+    }, [connected, selectedPort, disconnect]);
+
+    useEffect(() => {
+        if (serialMonterActive && selectedPort) {
+            connect();
+        } else if (!serialMonterActive && connected) {
+            disconnect();
+        }
+
+        return () => {
+            if (connected) {
+                disconnect();
+            }
+        };
+    }, [serialMonterActive, selectedPort, baud, connect, disconnect]);
+
+    useEffect(() => {
+        if (autoScroll) {
+            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [output, autoScroll]);
 
     const sendMessage = async () => {
         if (!input.trim() || !connected) return;
@@ -143,7 +202,6 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
                 <Select
                     value={selectedPort}
                     onValueChange={setPort}
-                    disabled={connected}
                 >
                     <SelectTrigger className="w-40">
                         <SelectValue placeholder="No ports" />
@@ -170,7 +228,6 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
                 <Select
                     value={String(baud)}
                     onValueChange={(value) => setBaud(Number(value))}
-                    disabled={connected}
                 >
                     <SelectTrigger className="w-32">
                         <SelectValue />
@@ -190,27 +247,20 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
 
                 <button
                     onClick={refreshPorts}
-                    disabled={connected}
-                    className="p-1 rounded text-neutral-600 hover:text-neutral-300 hover:bg-white/5 transition-all disabled:opacity-30"
+                    className="p-1 rounded text-neutral-600 hover:text-neutral-300 hover:bg-white/5 transition-all"
                     title="Refresh ports"
                 >
                     <LucideRefreshCw size={12} />
                 </button>
 
-                <div className="w-px h-4 bg-white/5" />
+                <div className="w-px h-4 bg-white/5 mx-1" />
 
-                <button
-                    onClick={connected ? disconnect : connect}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium transition-all ${connected
-                        ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
-                        : 'bg-purple-500/10 text-purple-400 hover:bg-purple-500/20'
-                        }`}
-                >
-                    {connected ? <PlugZap size={11} /> : <Plug size={11} />}
-                    {connected ? 'Disconnect' : 'Connect'}
-                </button>
-
-                <div className={`w-1.5 h-1.5 rounded-full ${connected ? 'bg-green-400 shadow-[0_0_6px_#4ade80]' : 'bg-neutral-700 shadow-[0_0_6px_#404040]'}`} />
+                <div className="flex items-center gap-2 px-2 select-none">
+                    <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${connected ? 'bg-green-400 shadow-[0_0_6px_#4ade80]' : 'bg-neutral-600 shadow-none'}`} />
+                    <span className={`text-xs font-medium ${connected ? 'text-green-400/90' : 'text-neutral-500'}`}>
+                        {connected ? 'Connected' : 'Disconnected'}
+                    </span>
+                </div>
 
                 <div className="flex-1" />
 
@@ -219,6 +269,26 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
                     className={`text-xs px-2 py-1 rounded hover:bg-white/5 transition-all ${autoScroll ? 'text-purple-400' : 'text-neutral-600 hover:text-neutral-400'}`}
                 >
                     Auto scroll
+                </button>
+
+                <button
+                    onClick={handleCopy}
+                    className="flex items-center gap-1.5 px-2 py-1 rounded text-xs transition-all"
+                    style={{ color: '#555', }}
+
+                    onMouseEnter={e => {
+                        e.currentTarget.style.color = '#aaa';
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                    }}
+
+                    onMouseLeave={e => {
+                        e.currentTarget.style.color = '#555';
+                        e.currentTarget.style.background = 'transparent';
+                    }}
+
+                    title="Copy output"
+                >
+                    {isCopied ? <CopyCheck size={11} /> : <Copy size={11} />}
                 </button>
 
                 <button
@@ -233,26 +303,18 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
 
                 <button
                     onClick={() => {
-                        if (connected) {
-                            disconnect();
-                        }
-
                         onClose();
                     }}
-
                     className="p-1.5 rounded transition-all"
                     style={{ color: '#555' }}
-
                     onMouseEnter={e => {
                         e.currentTarget.style.color = '#ff5f5f';
                         e.currentTarget.style.background = 'rgba(255,95,95,0.08)';
                     }}
-
                     onMouseLeave={e => {
                         e.currentTarget.style.color = '#555';
                         e.currentTarget.style.background = 'transparent';
                     }}
-
                     title="Close Serial Monitor"
                 >
                     <X size={12} />
@@ -271,6 +333,7 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
                     output.map((line, i) => {
                         const isSent = line.startsWith('> ');
                         const isError = /error/i.test(line);
+
                         return (
                             <div key={i} className="flex gap-3">
                                 <span className="text-neutral-800 select-none w-5 text-right shrink-0">{i + 1}</span>
@@ -285,6 +348,7 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
                         );
                     })
                 )}
+
                 <div ref={bottomRef} />
             </div>
 

@@ -61,7 +61,7 @@ function Terminal({ output, terminalIsActive, onClose, onClear } : TerminalProps
 
     return (
         <div 
-            className={`${terminalIsActive ? '' : 'hidden'} flex flex-col border-t border-white/10 max-h-[410px]`}
+            className={`${terminalIsActive ? '' : 'hidden'} flex flex-col border-t border-white/10 max-h-102.5`}
             style={{ 
                 height: `${height}px`,
                 background: '#000000',
@@ -189,6 +189,7 @@ function Terminal({ output, terminalIsActive, onClose, onClear } : TerminalProps
                             const isCMD = line.startsWith('>');
 
                             let color = '#606060';
+
                             if (isError) {
                                 color = '#ff5f5f';
                             }

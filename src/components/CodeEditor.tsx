@@ -36,13 +36,15 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                 }
 
                 beforeMount={(monaco) => {
-                    if (monaco.languages.getLanguages().some((lang: any) => lang.id === 'mello'))
-                        return; 
+                    if (monaco.languages.getLanguages().some((lang: any) => lang.id === 'mello')) {
+                        return;
+                    }
 
                     monaco.languages.register({ id: 'mello' });
 
                     monaco.languages.setMonarchTokensProvider('mello', {
                         keywords_def:     ['start', 'loop', 'func'],
+
                         keywords_control: [
                             'if', 'elif', 'else', 'return', 'every', 'while', 'for', 'repeat',
                             'or', 'and', 'not', 'in', 'range', 'break', 'continue', 'on_press'
