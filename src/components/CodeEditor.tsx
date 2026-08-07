@@ -54,7 +54,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                             'turn_on', 'turn_off', 'toggle', 'wait', 'write', 'read', 'serial.start', 'serial.print', 'serial.println',
                             'scale', 'serial.read', 'serial.available', 'serial.availableForWrite', 'serial.end', 'serial.find',
                             'serial.findUntil', 'serial.waitUntilSend', 'serial.parseFloat', 'serial.parseInt',
-                            'serial.peek', 'len', 'sleep'
+                            'serial.peek', 'pass', 'sleep'
                         ],
 
                         tokenizer: {
@@ -185,7 +185,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                                 { label: 'not', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'not ', range },
                                 { label: 'in', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'in', range },
                                 { label: 'range', kind: monaco.languages.CompletionItemKind.Function, insertText: 'range(${1:start}, ${2:end})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
-                                { label: 'len', kind: monaco.languages.CompletionItemKind.Function, insertText: 'len(${1:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'pass', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'pass', range },
 
                                 { label: 'turn_on', kind: monaco.languages.CompletionItemKind.Function, insertText: 'turn_on(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'turn_off', kind: monaco.languages.CompletionItemKind.Function, insertText: 'turn_off(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
