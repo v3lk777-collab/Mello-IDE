@@ -19,7 +19,7 @@ Built with **Tauri**, **Rust**, and **React + TypeScript**.
 ## Features
 
 - **Monaco-based code editor** with a custom Mello language definition:
-  - Syntax highlighting for definitions (`start`, `loop`, `func`), control flow (`if`, `elif`, `else`, `while`, `for`, `repeat`, `every`, `return`, `or`, `and`, `not`, `in`, `range`, `break`, `continue`), and I/O calls (`turn_on`, `turn_off`, `toggle`, `wait`, `write`, `read`, `scale`, `on_press`, `len`, `sleep`, and the `serial.*` family)
+  - Syntax highlighting for definitions (`start`, `loop`, `func`), control flow (`if`, `elif`, `else`, `while`, `for`, `repeat`, `every`, `return`, `or`, `and`, `not`, `in`, `range`, `break`, `continue`), and I/O calls (`turn_on`, `turn_off`, `toggle`, `wait`, `write`, `read`, `scale`, `on_press`, `pass`, `sleep`, and the `serial.*` family)
   - Autocomplete / snippet suggestions for all language keywords and built-in functions
   - Auto-closing brackets and quotes (`{}`, `[]`, `()`, `"`)
   - Two switchable editor themes (`melloKids`, `girls`), selectable from Settings and persisted across sessions
