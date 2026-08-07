@@ -70,6 +70,7 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
 
         if (unlistenRef.current) {
             unlistenRef.current();
+
             unlistenRef.current = null;
         }
 
@@ -84,6 +85,8 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
         try {
             await disconnect();
             await invoke("open_serial", { port: selectedPort, baud });
+
+            setOutput([]);
 
             const unlisten = await listen<string>("serial_data", (event) => {
                 setOutput(prev => [...prev, event.payload]);
@@ -140,10 +143,13 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
     }, [output, autoScroll]);
 
     const sendMessage = async () => {
-        if (!input.trim() || !connected) return;
+        if (!input.trim() || !connected) {
+            return;
+        }
 
         try {
-            await invoke("send_serial", { message: input + "\n" });
+            await invoke("send_serial", { message: input });
+
             setOutput(prev => [...prev, `> ${input}`]);
             setInput("");
         } catch (e) {
