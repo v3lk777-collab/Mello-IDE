@@ -89,7 +89,10 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
             setOutput([]);
 
             const unlisten = await listen<string>("serial_data", (event) => {
-                setOutput(prev => [...prev, event.payload]);
+                setOutput(prev => {
+                    const newOutput = [...prev, event.payload];
+                    return newOutput.length > 1000 ? newOutput.slice(-1000) : newOutput;
+                });
             });
 
             unlistenRef.current = unlisten;
