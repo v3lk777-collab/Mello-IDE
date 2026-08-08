@@ -66,12 +66,14 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn }: Title
     const setupListener = async () => {
       unlisten = await appWindow.onResized(async () => {
         const maximized = await appWindow.isMaximized();
+  
         setIsMaximized(maximized);
       });
     };
 
     const checkInitialState = async () => {
       const maximized = await appWindow.isMaximized();
+
       setIsMaximized(maximized);
     };
 
@@ -135,7 +137,7 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn }: Title
             <SelectValue />
           </SelectTrigger>
 
-          <SelectContent>
+          <SelectContent position="popper">
             {BOARD_OPTIONS.map((board) => (
               <SelectItem
                 key={board.value}

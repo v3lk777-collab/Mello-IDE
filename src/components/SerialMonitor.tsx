@@ -91,6 +91,7 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
             const unlisten = await listen<string>("serial_data", (event) => {
                 setOutput(prev => {
                     const newOutput = [...prev, event.payload];
+
                     return newOutput.length > 1000 ? newOutput.slice(-1000) : newOutput;
                 });
             });
@@ -114,6 +115,7 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
                 setOutput(prev => [...prev, "[Error] Device disconnected"]);
                 await disconnect();
                 setPort("");
+
                 return;
             }
 

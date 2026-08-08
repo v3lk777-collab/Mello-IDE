@@ -44,9 +44,24 @@ function App() {
     }
 
     const content = await invoke<string>("read_file_content", { path });
+
     setCode(content);
     setCurrentFilePath(path);
   };
+
+  useEffect(() => {
+    if (!currentFilePath) {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      invoke("save_file_content", { path: currentFilePath, content: code });
+    }, 500);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [code, currentFilePath]);
 
   useEffect(() => {
     let isActive = true;
@@ -79,6 +94,7 @@ function App() {
     }
 
     await invoke("save_file_content", { path: currentFilePath, content: code });
+
     await invoke<CompileResult>("verify_code", {
       sourcePath: currentFilePath,
       board: board
@@ -86,7 +102,7 @@ function App() {
   };
 
   const onUpload = async (board: string) => {
-    await invoke("close_serial").catch(() => {});
+    await invoke("close_serial").catch(() => { });
     setSerialMonitorActive(false);
 
     setTerminalActive(true);
