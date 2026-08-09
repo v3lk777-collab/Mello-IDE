@@ -2,7 +2,8 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { useState, useEffect, useRef, useCallback } from "react";
 
-import { LucideRefreshCw, Send, ListX, X, CopyCheck, Copy } from "lucide-react";
+import { toast } from "sonner";
+import { LucideRefreshCw, Send, ListX, X, CopyCheck, Copy, Unlink } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const BAUD_OPTIONS = [
@@ -45,10 +46,12 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
         try {
             await navigator.clipboard.writeText(output.join("\n"));
 
+            toast.success("Copied the output to the clipboard")
+
             setIsCopied(true);
             setTimeout(() => setIsCopied(false), 1000);
         } catch {
-            setOutput(prev => [...prev, "[Error] Couldn't copy the output to the clipboard"]);
+            toast.error("Couldn't copy the output to the clipboard");
         }
     }
 
@@ -282,6 +285,30 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
                     Auto scroll
                 </button>
 
+                <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.07)' }} />
+
+                <button
+                    onClick={() => {
+                        disconnect();
+                        toast.warning("The device has been disconnected");
+                    }}
+                    className="p-1.5 rounded transition-all"
+                    style={{ color: '#555' }}
+
+                    onMouseEnter={e => {
+                        e.currentTarget.style.color = '#ff5f5f';
+                        e.currentTarget.style.background = 'rgba(255,95,95,0.08)';
+                    }}
+
+                    onMouseLeave={e => {
+                        e.currentTarget.style.color = '#555';
+                        e.currentTarget.style.background = 'transparent';
+                    }}
+                    title="Disconnect"
+                >
+                    <Unlink size={12} />
+                </button>
+
                 <button
                     onClick={handleCopy}
                     className="flex items-center gap-1.5 px-2 py-1 rounded text-xs transition-all"
@@ -313,19 +340,21 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
                 <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.07)' }} />
 
                 <button
-                    onClick={() => {
-                        onClose();
-                    }}
+                    onClick={onClose}
+
                     className="p-1.5 rounded transition-all"
                     style={{ color: '#555' }}
+
                     onMouseEnter={e => {
                         e.currentTarget.style.color = '#ff5f5f';
                         e.currentTarget.style.background = 'rgba(255,95,95,0.08)';
                     }}
+
                     onMouseLeave={e => {
                         e.currentTarget.style.color = '#555';
                         e.currentTarget.style.background = 'transparent';
                     }}
+
                     title="Close Serial Monitor"
                 >
                     <X size={12} />

@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { useState, useEffect, useCallback } from "react";
 import { TerminalIcon, Copy, CopyCheck, ListX, X } from "lucide-react";
 
@@ -14,8 +15,6 @@ function Terminal({ output, terminalIsActive, onClose, onClear } : TerminalProps
 
     const [isCopied, setIsCopied] = useState<boolean>(false);
 
-    const [error, setError] = useState<string | null>(null);
-
     const startResizing = useCallback(() => {
         setIsResizing(true);
     }, []);
@@ -27,11 +26,13 @@ function Terminal({ output, terminalIsActive, onClose, onClear } : TerminalProps
     const handleCopy = async () => {
         try {
             await navigator.clipboard.writeText(output.join("\n"));
+
+            toast.success("Copied the output to the clipboard")
+
             setIsCopied(true);
             setTimeout(() => setIsCopied(false), 1000);
         } catch {
-            setError("Couldn't copy the output to the clipboard");
-            setTimeout(() => setError(null), 2000);
+            toast.error("Couldn't copy the output to the clipboard");
         }
     }
 
@@ -90,12 +91,6 @@ function Terminal({ output, terminalIsActive, onClose, onClear } : TerminalProps
                             <span>Terminal</span>
                         </div>
                     </div>
-
-                    {error && (
-                        <span className="text-xs whitespace-nowrap" style={{ color: '#ff5f5f' }}>
-                            {error}
-                        </span>
-                    )}
                 </div>
 
                 <div className="flex items-center gap-1">
