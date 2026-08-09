@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Editor, { loader } from '@monaco-editor/react';
 import { editorThemes } from '../utils/themes';
 import { editor, Position } from 'monaco-editor';
+import Editor, { loader } from '@monaco-editor/react';
 
 loader.config({ paths: { vs: '/monaco-editor/min/vs' } });
 

@@ -1,30 +1,59 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
+
+import { toast } from "sonner";
 import { FileNode, FileItem } from "./ui/FileNode";
 import { AnimatePresence, motion } from "framer-motion";
 import { Folder, Settings, Search, FolderOpen, LucideInfo } from "lucide-react";
 
 const menuItems = [
-    { id: "files", icon: Folder },
-    { id: "search", icon: Search }
+    {
+        id: "files",
+        icon: Folder
+    },
+    {
+        id: "search",
+        icon: Search
+    }
 ];
 
 const menuItemsFooter = [
-    { id: "info", icon: LucideInfo },
-    { id: "settings", icon: Settings }
+    {
+        id: "info",
+        icon: LucideInfo
+    },
+    {
+        id: "settings",
+        icon: Settings
+    }
 ];
 
 const themes = [
-    { label: "Kids", value: "melloKids" },
-    { label: "Girls (K-Drama)", value: "girls" },
+    {
+        label: "Kids",
+        value: "melloKids"
+    },
+    {
+        label: "Girls (K-Drama)",
+        value: "girls"
+    },
 ];
 
 const fonts = [
-    { label: "JetBrains Mono", value: "'JetBrains Mono', monospace" },
-    { label: "Fira Code", value: "'Fira Code', monospace" },
-    { label: "Cascadia Code", value: "'Cascadia Code', monospace" }
-];
+    {
+        label: "JetBrains Mono",
+        value: "'JetBrains Mono', monospace"
+    },
+    {
+        label: "Fira Code",
+        value: "'Fira Code', monospace"
+    },
+    {
+        label: "Cascadia Code",
+        value: "'Cascadia Code', monospace"
+    }
+]
 
 interface SidebarProps {
     theme: string;
@@ -39,7 +68,7 @@ interface SidebarProps {
     onLineHeightChange?: (height: number) => void;
 }
 
-function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, theme, onFontSizeChange, onFontFamilyChange, onLineHeightChange, onChangeTheme } : SidebarProps) {
+function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, theme, onFontSizeChange, onFontFamilyChange, onLineHeightChange, onChangeTheme }: SidebarProps) {
     const [activeItem, setActiveItem] = useState<string | null>("");
     const [files, setFiles] = useState<FileItem[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -58,8 +87,8 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                 setFiles(fetchedFiles);
                 onFolderOpen(selected as string);
             }
-        } catch (error) {
-            console.error("Failed to open folder:", error);
+        } catch (e) {
+            toast.error(`Failed to open folder: ${e}`);
         }
     };
 
