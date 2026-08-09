@@ -27,6 +27,8 @@ function App() {
 
   const [theme, setTheme] = useLocalStorage("theme", "melloKids");
 
+  const [useMinimap, onUseMinimapChange] = useLocalStorage("useMinimap", false);
+
   const [terminalActive, setTerminalActive] = useState<boolean>(false);
   const [serialMonitorActive, setSerialMonitorActive] = useState<boolean>(false);
   const [terminalOutput, setTerminalOutput] = useState<string[]>([]);
@@ -141,6 +143,8 @@ function App() {
 
       <div className="flex flex-1 w-full">
         <Sidebar
+          useMinimap={useMinimap}
+          onUseMinimapChange={onUseMinimapChange}
           onFolderOpen={onFolderOpen}
           onFileClick={onFileClick}
           onFontFamilyChange={setFontFamily}
@@ -168,6 +172,7 @@ function App() {
                   <CodeEditor
                     key="editor"
                     code={code}
+                    useMinimap={useMinimap}
                     onChange={setCode}
                     fontFamily={fontFamily}
                     fontSize={fontSize}

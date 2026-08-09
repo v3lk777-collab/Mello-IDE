@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 
 import { toast } from "sonner";
+import { Switch } from "./ui/switch";
 import { FileNode, FileItem } from "./ui/FileNode";
 import { AnimatePresence, motion } from "framer-motion";
 import { Folder, Settings, Search, FolderOpen, LucideInfo } from "lucide-react";
@@ -60,15 +61,17 @@ interface SidebarProps {
     fontSize: number;
     fontFamily: string;
     lineHeight: number;
+    useMinimap: boolean;
     onFileClick: (path: string) => void;
     onFolderOpen: (path: string) => void;
     onChangeTheme?: (theme: string) => void;
     onFontSizeChange?: (size: number) => void;
     onFontFamilyChange?: (family: string) => void;
     onLineHeightChange?: (height: number) => void;
+    onUseMinimapChange?: (value: boolean) => void;
 }
 
-function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, theme, onFontSizeChange, onFontFamilyChange, onLineHeightChange, onChangeTheme }: SidebarProps) {
+function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, theme, useMinimap, onUseMinimapChange, onFontSizeChange, onFontFamilyChange, onLineHeightChange, onChangeTheme }: SidebarProps) {
     const [activeItem, setActiveItem] = useState<string | null>("");
     const [files, setFiles] = useState<FileItem[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -394,6 +397,14 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                                     );
                                                 })}
                                             </div>
+                                        </div>
+
+                                        <div className="flex justify-between items-center text-xs font-medium text-neutral-500 group-hover/fontSize:text-neutral-400 transition-colors">
+                                            <span className="tracking-wide">Use Minimap</span>
+                                            <Switch
+                                                checked={useMinimap}
+                                                onCheckedChange={(value) => onUseMinimapChange?.(value)}
+                                            />
                                         </div>
                                     </div>
                                 </motion.div>

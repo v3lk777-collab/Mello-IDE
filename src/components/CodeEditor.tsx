@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { editorThemes } from '../utils/themes';
 import { editor, Position } from 'monaco-editor';
@@ -12,10 +11,11 @@ interface CodeEditorProps {
     fontSize: number;
     lineHeight: number;
     fontFamily: string;
+    useMinimap: boolean;
     onChange: (value: string) => void;
 }
 
-function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } : CodeEditorProps) {
+function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, useMinimap } : CodeEditorProps) {
     return (
         <div className="flex-1 h-full relative bg-transparent overflow-hidden">
             <Editor
@@ -229,7 +229,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily } 
                 onChange={(value) => onChange(value ?? "")}
 
                 options={{
-                    minimap: { enabled: true },
+                    minimap: { enabled: useMinimap ? true : false },
                     fontSize: fontSize,
                     lineHeight: lineHeight,
                     fontFamily: fontFamily,
