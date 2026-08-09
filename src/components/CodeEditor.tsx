@@ -82,6 +82,8 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                     });
 
                     monaco.languages.setLanguageConfiguration('mello', {
+                        wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\<\>\/\?\s]+)/,
+
                         brackets: [
                             ['{', '}'],
                             ['[', ']'],
@@ -93,12 +95,14 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                             { open: '[', close: ']' },
                             { open: '(', close: ')' },
                             { open: '"', close: '"' },
+                            { open: "'", close: "'" },
                         ],
                     });
 
                     monaco.languages.registerCompletionItemProvider('mello', {
                         provideCompletionItems: (model: editor.ITextModel, position: Position) => {
                             const word = model.getWordUntilPosition(position);
+
                             const range = {
                                 startLineNumber: position.lineNumber,
                                 endLineNumber: position.lineNumber,

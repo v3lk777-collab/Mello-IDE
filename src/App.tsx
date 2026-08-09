@@ -136,8 +136,13 @@ function App() {
       });
 
       toast.success("Uploaded", { id: onUploadToast });
+
+      setTerminalActive(false);
+
+      setSerialMonitorActive(true);
+      setCurrentTab("serial");
     } catch (e) {
-      toast.error(`Erro: ${e}`, { id: onUploadToast });
+      toast.error(`Error: ${e}`, { id: onUploadToast });
     }
   };
 
