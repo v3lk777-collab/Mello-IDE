@@ -70,24 +70,27 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
     };
 
     const disconnect = useCallback(async () => {
+        let success = true;
+
         try {
             await invoke("close_serial");
         } catch (e) {
             setOutput(prev => [...prev, `[Error] ${e}`]);
+            success = false;
         }
 
         if (unlistenRef.current) {
             unlistenRef.current();
-
             unlistenRef.current = null;
         }
 
         setConnected(false);
+        return success;
     }, []);
 
     const connect = useCallback(async () => {
         if (!selectedPort) {
-            return;
+            return false;
         }
 
         try {
@@ -99,16 +102,17 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
             const unlisten = await listen<string>("serial_data", (event) => {
                 setOutput(prev => {
                     const newOutput = [...prev, event.payload];
-
                     return newOutput.length > 1000 ? newOutput.slice(-1000) : newOutput;
                 });
             });
 
             unlistenRef.current = unlisten;
             setConnected(true);
+            return true;
         } catch (e) {
             setOutput(prev => [...prev, `[Error] ${e}`]);
             setConnected(false);
+            return false;
         }
     }, [selectedPort, baud, disconnect]);
 
@@ -293,13 +297,28 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
                 <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.07)' }} />
 
                 <button
-                    onClick={() => {
+                    onClick={async () => {
                         if (connected) {
-                            disconnect();
-                            toast.warning("The Arduino board has been disconnected");
+                            const success = await disconnect();
+
+                            if (success) {
+                                toast.warning("The Arduino board has been disconnected");
+                            } else {
+                                toast.error("Failed to disconnect properly");
+                            }
                         } else {
-                            toast.success("The Arduino board has been connected");
-                            connect();
+                            if (!selectedPort) {
+                                toast.error("No port selected");
+                                return;
+                            }
+
+                            const success = await connect();
+
+                            if (success) {
+                                toast.success("The Arduino board has been connected");
+                            } else {
+                                toast.error("Couldn't connect — check the board is plugged in");
+                            }
                         }
                     }}
 
