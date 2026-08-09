@@ -3,7 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { useState, useEffect, useRef, useCallback } from "react";
 
 import { toast } from "sonner";
-import { LucideRefreshCw, Send, ListX, X, CopyCheck, Copy, Unlink } from "lucide-react";
+import { LucideRefreshCw, Send, ListX, X, CopyCheck, Copy, Unlink, Link } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const BAUD_OPTIONS = [
@@ -43,6 +43,11 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
     const unlistenRef = useRef<(() => void) | null>(null);
 
     const handleCopy = async () => {
+        if (!output.length) {
+            toast.warning("Serial Monitor output is empty");
+            return;
+        }
+
         try {
             await navigator.clipboard.writeText(output.join("\n"));
 
@@ -289,9 +294,15 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
 
                 <button
                     onClick={() => {
-                        disconnect();
-                        toast.warning("The device has been disconnected");
+                        if (connected) {
+                            disconnect();
+                            toast.warning("The Arduino board has been disconnected");
+                        } else {
+                            toast.success("The Arduino board has been connected");
+                            connect();
+                        }
                     }}
+
                     className="p-1.5 rounded transition-all"
                     style={{ color: '#555' }}
 
@@ -304,9 +315,10 @@ function SerialMonitor({ onClose, serialMonterActive }: serialMonitorProps) {
                         e.currentTarget.style.color = '#555';
                         e.currentTarget.style.background = 'transparent';
                     }}
-                    title="Disconnect"
+
+                    title={connected ? "Disconnect" : "Connect"}
                 >
-                    <Unlink size={12} />
+                    {connected ? <Unlink size={12} /> : <Link size={12} />}
                 </button>
 
                 <button

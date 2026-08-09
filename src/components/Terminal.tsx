@@ -24,6 +24,11 @@ function Terminal({ output, terminalIsActive, onClose, onClear } : TerminalProps
     }, []);
 
     const handleCopy = async () => {
+        if (!output.length) {
+            toast.warning("Terminal output is empty");
+            return;
+        }
+
         try {
             await navigator.clipboard.writeText(output.join("\n"));
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
-import { Select,  SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Minus, Maximize, Minimize, X, Play, Upload, Terminal as TerminalIcon, Loader2, Activity } from 'lucide-react';
 
 const BOARD_OPTIONS = [
@@ -66,7 +66,7 @@ function Titlebar({ onVerify, onUpload, isTerminalOn, isSerialMonitorOn }: Title
     const setupListener = async () => {
       unlisten = await appWindow.onResized(async () => {
         const maximized = await appWindow.isMaximized();
-  
+
         setIsMaximized(maximized);
       });
     };

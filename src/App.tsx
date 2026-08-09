@@ -7,6 +7,7 @@ import { TypeAnimation } from "react-type-animation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
+import { toast } from "sonner";
 import Sidebar from "./components/Sidebar";
 import Terminal from "./components/Terminal";
 import Titlebar from "./components/Titlebar";
@@ -85,22 +86,30 @@ function App() {
     };
   }, []);
 
-
   const onVerify = async (board: string) => {
     setTerminalActive(true);
     setCurrentTab("terminal");
     setTerminalOutput([]);
 
+    const onVerifyToast = toast.loading("Verifying...");
+
     if (!currentFilePath) {
+      toast.error("No file is open to verify", { id: onVerifyToast });
       return;
     }
 
-    await invoke("save_file_content", { path: currentFilePath, content: code });
+    try {
+      await invoke("save_file_content", { path: currentFilePath, content: code });
 
-    await invoke<CompileResult>("verify_code", {
-      sourcePath: currentFilePath,
-      board: board
-    });
+      await invoke<CompileResult>("verify_code", {
+        sourcePath: currentFilePath,
+        board: board
+      });
+
+      toast.success("Verified", { id: onVerifyToast });
+    } catch (e) {
+      toast.error(`Error: ${e}`, { id: onVerifyToast });
+    }
   };
 
   const onUpload = async (board: string) => {
@@ -111,15 +120,25 @@ function App() {
     setCurrentTab("terminal");
     setTerminalOutput([]);
 
+    const onUploadToast = toast.loading("Uploading...");
+
     if (!currentFilePath) {
+      toast.error("No file is open to upload", { id: onUploadToast });
       return;
     }
 
-    await invoke("save_file_content", { path: currentFilePath, content: code });
-    await invoke<CompileResult>("upload_code", {
-      sourcePath: currentFilePath,
-      board: board
-    });
+    try {
+      await invoke("save_file_content", { path: currentFilePath, content: code });
+
+      await invoke<CompileResult>("upload_code", {
+        sourcePath: currentFilePath,
+        board: board
+      });
+
+      toast.success("Uploaded", { id: onUploadToast });
+    } catch (e) {
+      toast.error(`Erro: ${e}`, { id: onUploadToast });
+    }
   };
 
   return (
