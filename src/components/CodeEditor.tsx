@@ -15,7 +15,7 @@ interface CodeEditorProps {
     onChange: (value: string) => void;
 }
 
-function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, useMinimap } : CodeEditorProps) {
+function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, useMinimap }: CodeEditorProps) {
     return (
         <div className="flex-1 h-full relative bg-transparent overflow-hidden">
             <Editor
@@ -44,14 +44,14 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                     monaco.languages.register({ id: 'mello' });
 
                     monaco.languages.setMonarchTokensProvider('mello', {
-                        keywords_def:     ['start', 'loop', 'func'],
+                        keywords_def: ['start', 'loop', 'func'],
 
                         keywords_control: [
                             'if', 'elif', 'else', 'return', 'every', 'while', 'for', 'repeat',
                             'or', 'and', 'not', 'in', 'range', 'break', 'continue', 'on_press'
                         ],
 
-                        keywords_io:      [
+                        keywords_io: [
                             'turn_on', 'turn_off', 'toggle', 'wait', 'write', 'read', 'serial.start', 'serial.print', 'serial.println',
                             'scale', 'serial.read', 'serial.available', 'serial.availableForWrite', 'serial.end', 'serial.find',
                             'serial.findUntil', 'serial.waitUntilSend', 'serial.parseFloat', 'serial.parseInt',
@@ -62,21 +62,21 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                             root: [
                                 [/[a-z_$][\w$]*(\.[\w$]+)?/, {
                                     cases: {
-                                        '@keywords_def':     'keyword.def',
+                                        '@keywords_def': 'keyword.def',
                                         '@keywords_control': 'keyword.control',
-                                        '@keywords_io':      'keyword.io',
-                                        '@default':          'variable'
+                                        '@keywords_io': 'keyword.io',
+                                        '@default': 'variable'
                                     }
                                 }],
 
-                                [/[A-Z][\w$]*/,                 'type.name'],
-                                [/\d+\.\d+/,                    'number.float'],
-                                [/\d+/,                         'number.int'],
-                                [/"([^"\\]|\\.)*"/,             'string.quoted'],
-                                [/#.*$/,                        'comment.line'],
-                                [/[=><!~?:&|+\-*\/\^%]+/,       'operator'],
-                                [/[{}()\[\]]/,                  'delimiter.bracket'],
-                                [/[,;]/,                        'delimiter'],
+                                [/[A-Z][\w$]*/, 'type.name'],
+                                [/\d+\.\d+/, 'number.float'],
+                                [/\d+/, 'number.int'],
+                                [/"([^"\\]|\\.)*"/, 'string.quoted'],
+                                [/#.*$/, 'comment.line'],
+                                [/[=><!~?:&|+\-*\/\^%]+/, 'operator'],
+                                [/[{}()\[\]]/, 'delimiter.bracket'],
+                                [/[,;]/, 'delimiter'],
                             ],
                         },
                     });
@@ -185,8 +185,8 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                                 { label: 'or', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'or', range },
                                 { label: 'not', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'not ', range },
                                 { label: 'in', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'in', range },
-                                { label: 'range', kind: monaco.languages.CompletionItemKind.Function, insertText: 'range(${1:start}, ${2:end})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'pass', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'pass', range },
+                                { label: 'range', kind: monaco.languages.CompletionItemKind.Function, insertText: 'range(${1:start}, ${2:end})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
 
                                 { label: 'turn_on', kind: monaco.languages.CompletionItemKind.Function, insertText: 'turn_on(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'turn_off', kind: monaco.languages.CompletionItemKind.Function, insertText: 'turn_off(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
@@ -216,7 +216,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                             return { suggestions };
                         },
 
-                        triggerCharacters: ['.', 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_'],
+                        triggerCharacters: ['.', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '_'],
                     });
 
                     Object.entries(editorThemes).forEach(([themeName, themeData]) => {
