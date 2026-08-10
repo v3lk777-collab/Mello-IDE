@@ -66,7 +66,6 @@ Built with **Tauri**, **Rust**, and **React + TypeScript**.
 | `open_serial` | Opens a serial connection at a given baud rate and streams incoming data as `serial_data` events |
 | `close_serial` | Closes the active serial connection |
 | `send_serial` | Sends a message over the open serial connection |
-| `close_splashscreen` | Closes the splash window and reveals the main window once the app is ready |
 
 ---
 
@@ -75,6 +74,34 @@ Built with **Tauri**, **Rust**, and **React + TypeScript**.
 - [Node.js](https://nodejs.org/) and a package manager (npm/pnpm/yarn)
 - [Rust](https://www.rust-lang.org/tools/install) and the [Tauri CLI](https://tauri.app/start/prerequisites/)
 - The Mello compiler binary and its bundled tools (`arduino-cli`, `clang-format`), packaged under `src-tauri/resources` and resolved at runtime via Tauri's resource directory — no manual path setup needed
+
+---
+
+## Performance
+
+Mello IDE is built on **Tauri** instead of Electron, which means it renders
+through the operating system's native WebView instead of bundling an entire
+Chromium runtime. In practice, that means a smaller installer, a faster
+cold start, and a lighter memory footprint than Arduino IDE 2.x — without
+giving up any editor functionality.
+
+| Metric | Mello IDE | Arduino IDE 2.x |
+|---|---|---|
+| Installer size | ~X MB | ~500+ MB |
+| Cold start time | ~X sec | ~X sec |
+| Idle RAM usage | ~X MB | ~X MB |
+
+*(Measured on [your machine specs — CPU/RAM/OS], comparing Mello IDE
+vX.X.X against Arduino IDE 2.X.X.)*
+
+<p align="center">
+  <img src="/public/images/Screenshot 2026-08-01 161442.jpg" width="45%" alt="Mello IDE cold start time" />
+  <img src="/public/images/Screenshot 2026-08-01 161454.jpg" width="45%" alt="Mello IDE idle memory usage" />
+</p>
+<p align="center">
+  <img src="/public/images/Screenshot 2026-08-01 161503.jpg" width="45%" alt="Mello IDE installer size" />
+  <img src="/public/images/Screenshot 2026-08-09 214006.jpg" width="45%" alt="Mello IDE vs Arduino IDE comparison" />
+</p>
 
 ---
 
