@@ -91,8 +91,8 @@ giving up any editor functionality.
 | Cold start time | ~X sec | ~X sec |
 | Idle RAM usage | ~X MB | ~X MB |
 
-*(Measured on [your machine specs — CPU/RAM/OS], comparing Mello IDE
-vX.X.X against Arduino IDE 2.X.X.)*
+*(Measured on [Windows 10], comparing Mello IDE
+v0.1.2 against Arduino IDE 2.3.10)*
 
 <p align="center">
   <img src="/public/images/Screenshot 2026-08-01 161442.jpg" width="45%" alt="Mello IDE cold start time" />
