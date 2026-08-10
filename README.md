@@ -85,11 +85,11 @@ Chromium runtime. In practice, that means a smaller installer, a faster
 cold start, and a lighter memory footprint than Arduino IDE 2.x — without
 giving up any editor functionality.
 
-| Metric | Mello IDE | Arduino IDE 2.x |
+| Metric | Mello IDE | Arduino IDE 2.3.10 |
 |---|---|---|
-| Installer size | ~X MB | ~500+ MB |
-| Cold start time | ~X sec | ~X sec |
-| Idle RAM usage | ~X MB | ~X MB |
+| Installer size | ~55 MB | ~500+ MB |
+| Cold start time | ~1 sec | ~10 sec |
+| Idle RAM usage | ~42.9 MB | ~232.6 MB |
 
 *(Measured on [Windows 10], comparing Mello IDE
 v0.1.2 against Arduino IDE 2.3.10)*
