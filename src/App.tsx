@@ -59,7 +59,7 @@ function App() {
 
     const timeoutId = setTimeout(() => {
       invoke("save_file_content", { path: currentFilePath, content: code });
-    }, 500);
+    }, 100);
 
     return () => {
       clearTimeout(timeoutId);
@@ -136,6 +136,8 @@ function App() {
       });
 
       toast.success("Uploaded", { id: onUploadToast });
+
+      setTimeout(() => {}, 1500);
 
       setTerminalActive(false);
 

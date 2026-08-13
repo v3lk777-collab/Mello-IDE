@@ -398,9 +398,12 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                                 })}
                                             </div>
                                         </div>
+                                        <div className="flex justify-between items-center py-1.5">
+                                            <div className="flex flex-col gap-0.5">
+                                                <span className="text-xs font-medium text-neutral-200">Use Minimap</span>
+                                                <span className="text-[11px] text-neutral-400 font-normal">Turning it off improves editor performance</span>
+                                            </div>
 
-                                        <div className="flex justify-between items-center text-xs font-medium text-neutral-500 group-hover/fontSize:text-neutral-400 transition-colors">
-                                            <span className="tracking-wide">Use Minimap</span>
                                             <Switch
                                                 checked={useMinimap}
                                                 onCheckedChange={(value) => onUseMinimapChange?.(value)}
