@@ -37,6 +37,8 @@ fn run_mello(app: &AppHandle, source_path: &str, board: &str, upload: bool) -> R
     cmd.arg(source_path);
     cmd.arg(board);
 
+    cmd.arg("--no-output");
+
     if upload {
         cmd.arg("--upload");
     }

@@ -19,7 +19,7 @@ interface CompileResult {
 }
 
 function App() {
-  const [code, setCode] = useState<string>("");
+  const [code, setCode] = useState<string>("fn start():\n\t# Put your setup code here, to run once\n\nfn loop():\n\t# Put your main code here, to run repeatedly");
   const [currentFilePath, setCurrentFilePath] = useState<string>("");
 
   const [fontSize, setFontSize] = useLocalStorage("fontSize", 14);

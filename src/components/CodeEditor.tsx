@@ -44,7 +44,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                     monaco.languages.register({ id: 'mello' });
 
                     monaco.languages.setMonarchTokensProvider('mello', {
-                        keywords_def: ['start', 'loop', 'func'],
+                        keywords_def: ['start', 'loop', 'fn'],
 
                         keywords_control: [
                             'if', 'elif', 'else', 'return', 'every', 'while', 'for', 'repeat',
@@ -54,8 +54,8 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                         keywords_io: [
                             'turn_on', 'turn_off', 'toggle', 'wait', 'write', 'read', 'serial.start', 'serial.print', 'serial.println',
                             'scale', 'serial.read', 'serial.available', 'serial.availableForWrite', 'serial.end', 'serial.find',
-                            'serial.findUntil', 'serial.waitUntilSend', 'serial.parseFloat', 'serial.parseInt',
-                            'serial.peek', 'pass', 'sleep'
+                            'serial.findUntil', 'serial.waitUntilSend', 'serial.parseFloat', 'serial.parseInt', "save_memory", "read_memory",
+                            'serial.peek', 'serial.readStringUntil', 'pass', 'sleep'
                         ],
 
                         tokenizer: {
@@ -114,21 +114,21 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                                 {
                                     label: 'start',
                                     kind: monaco.languages.CompletionItemKind.Snippet,
-                                    insertText: 'start:\n\t${0}',
+                                    insertText: 'fn start():\n\t${0}',
                                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                                     range
                                 },
                                 {
                                     label: 'loop',
                                     kind: monaco.languages.CompletionItemKind.Snippet,
-                                    insertText: 'loop:\n\t${0}',
+                                    insertText: 'fn loop():\n\t${0}',
                                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                                     range
                                 },
                                 {
-                                    label: 'func',
+                                    label: 'fn',
                                     kind: monaco.languages.CompletionItemKind.Snippet,
-                                    insertText: 'func ${1:name}():\n\t${0}',
+                                    insertText: 'fn ${1:name}():\n\t${0}',
                                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                                     range
                                 },
@@ -199,6 +199,8 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                                 { label: 'sleep', kind: monaco.languages.CompletionItemKind.Function, insertText: 'sleep(${1:idel})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'write', kind: monaco.languages.CompletionItemKind.Function, insertText: 'write(${1:pin}, ${2:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'read', kind: monaco.languages.CompletionItemKind.Function, insertText: 'read(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'save_memory', kind: monaco.languages.CompletionItemKind.Function, insertText: 'save_memory(${1:address}, ${2:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'read_memory', kind: monaco.languages.CompletionItemKind.Function, insertText: 'read_memory(${1:address})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'scale', kind: monaco.languages.CompletionItemKind.Function, insertText: 'scale(${1:value}, ${2:fromMin}, ${3:fromMax}, ${4:toMin}, ${5:toMax})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'on_press', kind: monaco.languages.CompletionItemKind.Function, insertText: 'on_press(${1:button}):\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
 
@@ -233,7 +235,10 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                 onChange={(value) => onChange(value ?? "")}
 
                 options={{
+                    automaticLayout: true,
+
                     minimap: { enabled: useMinimap ? true : false },
+
                     fontSize: fontSize,
                     lineHeight: lineHeight,
                     fontFamily: fontFamily,
@@ -248,7 +253,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                     colorDecorators: true,
                     renderLineHighlight: "all",
                     roundedSelection: false,
-                    scrollBeyondLastLine: false,
+                    scrollBeyondLastLine: true,
 
                     bracketPairColorization: {
                         enabled: true,

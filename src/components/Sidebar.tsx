@@ -189,7 +189,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                         animate={{ width: 256, opacity: 1 }}
                         exit={{ width: 0, opacity: 0 }}
                         transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
-                        className="bg-black border-r border-white/5 flex flex-col overflow-hidden"
+                        className="h-full bg-black border-r border-white/5 flex flex-col overflow-x-hidden"
                     >
                         <div className="w-64 p-4 h-full flex flex-col">
                             <h2 className="text-white font-bold mb-4 pb-1 capitalize border-b border-white/5 shrink-0">
@@ -197,7 +197,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                             </h2>
 
                             {activeItem === "files" && (
-                                <div className="flex-1 overflow-y-auto">
+                                <div className="flex-1 overflow-y-scroll">
                                     {renderFilesList()}
                                 </div>
                             )}
@@ -241,7 +241,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
 
                                     <div className="border-t border-white/5 pt-4 gap-1">
                                         <p className="text-neutral-500 text-xs uppercase font-bold">Version</p>
-                                        <p className="text-white text-sm">v0.1.2</p>
+                                        <p className="text-white text-sm">v0.1.3</p>
                                     </div>
                                 </motion.div>
                             )}
