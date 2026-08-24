@@ -315,9 +315,11 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
                                                 step="1"
                                                 value={lineHeight}
                                                 onChange={(e) => onLineHeightChange?.(Number(e.target.value))}
+
                                                 style={{
                                                     background: `linear-gradient(to right, #a855f7 0%, #a855f7 ${((lineHeight - 20) / (34 - 20)) * 100}%, #1f1f1f ${((lineHeight - 20) / (34 - 20)) * 100}%, #1f1f1f 100%)`
                                                 }}
+
                                                 className="
                                                     w-full h-1 rounded-full cursor-pointer appearance-none outline-none transition-all duration-200
                                                     group-hover/lineHeight:h-1.5
