@@ -19,7 +19,7 @@ Built with **Tauri**, **Rust**, and **React + TypeScript**.
 ## Features
 
 - **Monaco-based code editor** with a custom Mello language definition:
-  - Syntax highlighting for definitions (`start`, `loop`, `func`), control flow (`if`, `elif`, `else`, `while`, `for`, `repeat`, `every`, `return`, `or`, `and`, `not`, `in`, `range`, `break`, `continue`, `pass`), and I/O calls (`turn_on`, `turn_off`, `toggle`, `wait`, `write`, `read`, `scale`, `on_press`, `sleep`, and the `serial.*` family)
+  - Syntax highlighting for definitions (`start`, `loop`, `fn`), control flow (`if`, `elif`, `else`, `while`, `for`, `repeat`, `every`, `return`, `or`, `and`, `not`, `in`, `range`, `break`, `continue`, `pass`), and I/O calls (`turn_on`, `turn_off`, `toggle`, `wait`, `write`, `read`, `scale`, `on_press`, `sleep`, and the `serial.*` family)
   - Autocomplete / snippet suggestions for all language keywords and built-in functions
   - Auto-closing brackets and quotes (`{}`, `[]`, `()`, `"`)
   - Two switchable editor themes (`melloKids`, `girls`), selectable from Settings and persisted across sessions
@@ -97,6 +97,7 @@ giving up any editor functionality.
   <img src="/public/images/Screenshot 2026-08-01 161442.jpg" width="45%" alt="Mello IDE cold start time" />
   <img src="/public/images/Screenshot 2026-08-01 161454.jpg" width="45%" alt="Mello IDE idle memory usage" />
 </p>
+
 <p align="center">
   <img src="/public/images/Screenshot 2026-08-01 161503.jpg" width="45%" alt="Mello IDE installer size" />
   <img src="/public/images/Screenshot 2026-08-09 214006.jpg" width="45%" alt="Mello IDE vs Arduino IDE comparison" />
@@ -124,9 +125,9 @@ npm run tauri build
 ```
 pin = 13
 
-loop:
-    toggle(pin)
-    wait(1s)
+fn loop():
+  toggle(pin)
+  wait(1s)
 ```
 
 Mello source compiles down to native Arduino C++ (`-O3 -flto`, targeting `arduino:avr:uno` by default) with no interpreter or runtime layer.
