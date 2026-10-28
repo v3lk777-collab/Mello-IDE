@@ -241,7 +241,7 @@ function Sidebar({ onFolderOpen, onFileClick, fontSize, lineHeight, fontFamily, 
 
                                     <div className="border-t border-white/5 pt-4 gap-1">
                                         <p className="text-neutral-500 text-xs uppercase font-bold">Version</p>
-                                        <p className="text-white text-sm">v0.1.4</p>
+                                        <p className="text-white text-sm">v0.1.5</p>
                                     </div>
                                 </motion.div>
                             )}

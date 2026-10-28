@@ -32,7 +32,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                         className="flex flex-col w-full h-full items-center justify-center gap-1.5 p-4"
                     >
                         <span className="text-neutral-40">Loading...</span>
-                        <span className="text-xs text-neutral-600">Pls wait a minute...</span>
+                        <span className="text-xs text-neutral-600">Please wait a minute...</span>
                     </motion.div>
                 }
 
@@ -55,7 +55,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                             'turn_on', 'turn_off', 'toggle', 'wait', 'write', 'read', 'serial.start', 'serial.print', 'serial.println',
                             'scale', 'serial.read', 'serial.available', 'serial.availableForWrite', 'serial.end', 'serial.find',
                             'serial.findUntil', 'serial.waitUntilSend', 'serial.parseFloat', 'serial.parseInt', "save_memory", "read_memory",
-                            'serial.peek', 'serial.readStringUntil', 'pass', 'sleep'
+                            'serial.peek', 'serial.readStringUntil', 'pass', 'sleep', 'millis', 'HIGH', 'LOW'
                         ],
 
                         tokenizer: {
@@ -190,6 +190,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                                 { label: 'not', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'not ', range },
                                 { label: 'in', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'in', range },
                                 { label: 'pass', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'pass', range },
+                                { label: 'millis', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'millis()', range },
                                 { label: 'range', kind: monaco.languages.CompletionItemKind.Function, insertText: 'range(${1:start}, ${2:end})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
 
                                 { label: 'turn_on', kind: monaco.languages.CompletionItemKind.Function, insertText: 'turn_on(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
