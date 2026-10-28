@@ -48,7 +48,8 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
 
                         keywords_control: [
                             'if', 'elif', 'else', 'return', 'every', 'while', 'for', 'repeat',
-                            'or', 'and', 'not', 'in', 'range', 'break', 'continue', 'on_press'
+                            'or', 'and', 'not', 'in', 'range', 'break', 'continue', 'on_press',
+                            'use'
                         ],
 
                         keywords_io: [

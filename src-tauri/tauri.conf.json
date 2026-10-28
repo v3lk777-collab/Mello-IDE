@@ -3,12 +3,14 @@
   "productName": "Mello IDE",
   "version": "0.1.5",
   "identifier": "com.mohammed.mello-ide",
+
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
+
   "app": {
     "windows": [
       {
@@ -25,6 +27,7 @@
       "csp": null
     }
   },
+
   "bundle": {
     "active": true,
     "targets": "all",
@@ -43,6 +46,8 @@
   
     "resources": [
       "mello/build/mello.exe",
+      "mello/stdlib/math/math.mello",
+      "mello/stdlib/random/random.mello",
       "mello/bin/win32/arduino-cli.exe",
       "mello/bin/win32/clang-format.exe"
     ],
