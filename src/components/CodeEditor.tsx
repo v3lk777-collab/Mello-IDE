@@ -56,7 +56,8 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                             'turn_on', 'turn_off', 'toggle', 'wait', 'write', 'read', 'serial.start', 'serial.print', 'serial.println',
                             'scale', 'serial.read', 'serial.available', 'serial.availableForWrite', 'serial.end', 'serial.find',
                             'serial.findUntil', 'serial.waitUntilSend', 'serial.parseFloat', 'serial.parseInt', "save_memory", "read_memory",
-                            'serial.peek', 'serial.readStringUntil', 'pass', 'sleep', 'millis', 'HIGH', 'LOW'
+                            'serial.peek', 'serial.readStringUntil', 'pass', 'sleep', 'millis', 'HIGH', 'LOW', 'void', 'str', 'int', 'bool',
+                            'float', 'char'
                         ],
 
                         tokenizer: {
@@ -190,6 +191,8 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                                 { label: 'or', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'or', range },
                                 { label: 'not', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'not ', range },
                                 { label: 'in', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'in', range },
+                                { label: 'HIGH', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'HIGH', range },
+                                { label: 'LOW', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'LOW', range },
                                 { label: 'pass', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'pass', range },
                                 { label: 'millis', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'millis()', range },
                                 { label: 'range', kind: monaco.languages.CompletionItemKind.Function, insertText: 'range(${1:start}, ${2:end})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
