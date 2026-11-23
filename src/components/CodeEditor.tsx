@@ -37,27 +37,24 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                 }
 
                 beforeMount={(monaco) => {
-                    if (monaco.languages.getLanguages().some((lang: any) => lang.id === 'mello')) {
-                        return;
+                    if (!monaco.languages.getLanguages().some((lang: { id: string }) => lang.id === 'mello')) {
+                        monaco.languages.register({ id: 'mello' });
                     }
 
-                    monaco.languages.register({ id: 'mello' });
-
                     monaco.languages.setMonarchTokensProvider('mello', {
-                        keywords_def: ['start', 'loop', 'fn'],
+                        keywords_def: ['start', 'loop', 'fn', 'use', 'module', 'class'],
 
                         keywords_control: [
                             'if', 'elif', 'else', 'return', 'every', 'while', 'for', 'repeat',
-                            'or', 'and', 'not', 'in', 'range', 'break', 'continue', 'on_press',
-                            'use'
+                            'or', 'and', 'not', 'in', 'range', 'break', 'continue', 'on_press'
                         ],
 
                         keywords_io: [
                             'turn_on', 'turn_off', 'toggle', 'wait', 'write', 'read', 'serial.start', 'serial.print', 'serial.println',
                             'scale', 'serial.read', 'serial.available', 'serial.availableForWrite', 'serial.end', 'serial.find',
-                            'serial.findUntil', 'serial.waitUntilSend', 'serial.parseFloat', 'serial.parseInt', "save_memory", "read_memory",
+                            'serial.findUntil', 'serial.waitUntilSend', 'serial.parseFloat', 'serial.parseInt', 'save_memory', 'read_memory',
                             'serial.peek', 'serial.readStringUntil', 'pass', 'sleep', 'millis', 'HIGH', 'LOW', 'void', 'str', 'int', 'bool',
-                            'float', 'char'
+                            'float', 'char', 'delay_ms', 'pin_mode'
                         ],
 
                         tokenizer: {
@@ -72,18 +69,37 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                                 }],
 
                                 [/[A-Z][\w$]*/, 'type.name'],
-                                [/\d+\.\d+/, 'number.float'],
-                                [/\d+/, 'number.int'],
                                 [/"([^"\\]|\\.)*"/, 'string.quoted'],
                                 [/#.*$/, 'comment.line'],
                                 [/[=><!~?:&|+\-*\/\^%]+/, 'operator'],
                                 [/[{}()\[\]]/, 'delimiter.bracket'],
                                 [/[,;]/, 'delimiter'],
+
+                                [/0[xX][0-9a-fA-F]+/, 'number.hex'],
+                                [/0[bB][01]+/, 'number.binary'],
+                                [/0[oO][0-7]+/, 'number.octal'],
+                                [/\d+\.\d+([eE][+-]?\d+)?/, 'number.float'],
+                                [/\d+/, 'number.int'],
                             ],
                         },
                     });
 
                     monaco.languages.setLanguageConfiguration('mello', {
+                        onEnterRules: [
+                            {
+                                beforeText: /^\s*(?:fn|if|elif|else|while|for|repeat|every|module|on_press).*:\s*$/,
+
+                                action: {
+                                    indentAction: monaco.languages.IndentAction.Indent
+                                }
+                            }
+                        ],
+
+                        indentationRules: {
+                            increaseIndentPattern: /^.*:\s*$/,
+                            decreaseIndentPattern: /^\s*(?:elif|else)\b.*$/
+                        },
+
                         wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\<\>\/\?\s]+)/,
 
                         brackets: [
@@ -114,6 +130,13 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
 
                             const suggestions = [
                                 {
+                                    label: 'use',
+                                    kind: monaco.languages.CompletionItemKind.Snippet,
+                                    insertText: 'use ${1:module_name}',
+                                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                    range
+                                },
+                                {
                                     label: 'start',
                                     kind: monaco.languages.CompletionItemKind.Snippet,
                                     insertText: 'fn start():\n\t${0}',
@@ -124,6 +147,13 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                                     label: 'loop',
                                     kind: monaco.languages.CompletionItemKind.Snippet,
                                     insertText: 'fn loop():\n\t${0}',
+                                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                    range
+                                },
+                                {
+                                    label: 'class',
+                                    kind: monaco.languages.CompletionItemKind.Snippet,
+                                    insertText: 'class ${1:name}:\n\t${0}',
                                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                                     range
                                 },
@@ -201,13 +231,17 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                                 { label: 'turn_off', kind: monaco.languages.CompletionItemKind.Function, insertText: 'turn_off(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'toggle', kind: monaco.languages.CompletionItemKind.Function, insertText: 'toggle(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'wait', kind: monaco.languages.CompletionItemKind.Function, insertText: 'wait(${1:1s})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
-                                { label: 'sleep', kind: monaco.languages.CompletionItemKind.Function, insertText: 'sleep(${1:idel})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'sleep', kind: monaco.languages.CompletionItemKind.Function, insertText: 'sleep(${1:duration})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'write', kind: monaco.languages.CompletionItemKind.Function, insertText: 'write(${1:pin}, ${2:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'read', kind: monaco.languages.CompletionItemKind.Function, insertText: 'read(${1:pin})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'save_memory', kind: monaco.languages.CompletionItemKind.Function, insertText: 'save_memory(${1:address}, ${2:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'read_memory', kind: monaco.languages.CompletionItemKind.Function, insertText: 'read_memory(${1:address})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'scale', kind: monaco.languages.CompletionItemKind.Function, insertText: 'scale(${1:value}, ${2:fromMin}, ${3:fromMax}, ${4:toMin}, ${5:toMax})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
-                                { label: 'on_press', kind: monaco.languages.CompletionItemKind.Function, insertText: 'on_press(${1:button}):\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'on_press', kind: monaco.languages.CompletionItemKind.Function, insertText: 'on_press ${1:button}:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+
+                                { label: 'module', kind: monaco.languages.CompletionItemKind.Method, insertText: 'module ${1:module_name}:\n\t${0}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'delay_ms', kind: monaco.languages.CompletionItemKind.Method, insertText: 'delay_ms(${1:duration})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
+                                { label: 'pin_mode', kind: monaco.languages.CompletionItemKind.Method, insertText: 'pin_mode(${1:pin}, ${2:pin_mode})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
 
                                 { label: 'serial.start', kind: monaco.languages.CompletionItemKind.Method, insertText: 'serial.start(${1:9600})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
                                 { label: 'serial.print', kind: monaco.languages.CompletionItemKind.Method, insertText: 'serial.print(${1:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range },
@@ -227,7 +261,7 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                             return { suggestions };
                         },
 
-                        triggerCharacters: ['.', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '_'],
+                        triggerCharacters: ['.'],
                     });
 
                     Object.entries(editorThemes).forEach(([themeName, themeData]) => {
@@ -295,6 +329,13 @@ function CodeEditor({ code, onChange, theme, fontSize, lineHeight, fontFamily, u
                         verticalScrollbarSize: 8,
                         horizontalScrollbarSize: 8,
                     },
+
+                    autoIndent: "full",
+                    lineNumbers: "on",
+                    folding: true,
+                    matchBrackets: "always",
+                    renderValidationDecorations: "on",
+                    ariaLabel: "Mello Programming Language Editor",
                 }}
             />
         </div>

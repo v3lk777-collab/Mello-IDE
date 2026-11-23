@@ -14,6 +14,10 @@ const BOARD_OPTIONS = [
     value: "nano",
     label: "Arduino Nano",
   },
+  {
+    value: "esp32",
+    label: "ESP32",
+  },
 ];
 
 interface TitlebarProps {

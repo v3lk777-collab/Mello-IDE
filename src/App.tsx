@@ -1,13 +1,15 @@
 import "./App.css";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { TypeAnimation } from "react-type-animation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
 import { toast } from "sonner";
+import { LuFolders } from "react-icons/lu";
+
+import Tabbar, { type EditorTab } from "./components/Tabbar";
 import Sidebar from "./components/Sidebar";
 import Terminal from "./components/Terminal";
 import Titlebar from "./components/Titlebar";
@@ -18,9 +20,15 @@ interface CompileResult {
   success: boolean;
 }
 
+interface OpenFileTab extends EditorTab {
+  content: string;
+}
+
 function App() {
   const [code, setCode] = useState<string>("fn start():\n\t# Put your setup code here, to run once\n\nfn loop():\n\t# Put your main code here, to run repeatedly");
   const [currentFilePath, setCurrentFilePath] = useState<string>("");
+
+  const [openTabs, setOpenTabs] = useState<OpenFileTab[]>([]);
 
   const [fontSize, setFontSize] = useLocalStorage("fontSize", 14);
   const [lineHeight, setLineHeight] = useLocalStorage("lineHeight", 20);
@@ -36,35 +44,211 @@ function App() {
 
   const [currentTab, setCurrentTab] = useState<string>("");
 
-  const onFolderOpen = (_path: string) => {
-    setCode("");
-    setCurrentFilePath("");
+  const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const fileRequestRef = useRef<number>(0);
+
+  const saveFileContent = useCallback(
+    (path: string, content: string): Promise<void> => {
+      const operation = saveQueueRef.current.then(
+        () => invoke<void>("save_file_content", { path, content }),
+        () => invoke<void>("save_file_content", { path, content })
+      );
+
+      saveQueueRef.current = operation;
+
+      return operation;
+    },
+    []
+  );
+
+  const saveCurrentFile = useCallback(async () => {
+    if (!currentFilePath) return;
+
+    const path = currentFilePath;
+    const content = code;
+
+    await saveFileContent(path, content);
+
+    setOpenTabs((previous) =>
+      previous.map((tab) =>
+        tab.id === path && tab.content === content
+          ? { ...tab, isDirty: false }
+          : tab
+      )
+    );
+  }, [currentFilePath, code, saveFileContent]);
+
+  const onFolderOpen = async (_path: string) => {
+    const requestId = ++fileRequestRef.current;
+
+    try {
+      for (const tab of openTabs) {
+        const content = tab.id === currentFilePath
+          ? code
+          : tab.content;
+
+        await saveFileContent(tab.id, content);
+      }
+
+      if (requestId !== fileRequestRef.current) return;
+
+      setOpenTabs([]);
+      setCode("");
+      setCurrentFilePath("");
+    } catch (error) {
+      toast.error(`Could not save files: ${error}`);
+    }
   };
 
   const onFileClick = async (path: string) => {
-    if ((path != currentFilePath) && currentFilePath) {
-      await invoke("save_file_content", { path: currentFilePath, content: code });
+    const requestId = ++fileRequestRef.current;
+
+    if (path === currentFilePath) return;
+
+    try {
+      await saveCurrentFile();
+
+      if (requestId !== fileRequestRef.current) return;
+
+      const existingTab = openTabs.find(
+        (tab) => tab.id === path
+      );
+
+      if (existingTab) {
+        setCurrentFilePath(existingTab.id);
+        setCode(existingTab.content);
+        return;
+      }
+
+      const content = await invoke<string>("read_file_content", { path });
+
+      if (requestId !== fileRequestRef.current) return;
+
+      const fileName = path.split(/[\\/]/).pop() || path;
+
+      const newTab: OpenFileTab = {
+        id: path,
+        name: fileName,
+        content,
+        isDirty: false,
+      };
+
+      setOpenTabs((previous) => [...previous, newTab]);
+      setCode(content);
+      setCurrentFilePath(path);
+    } catch (error) {
+      if (requestId === fileRequestRef.current) {
+        toast.error(`Could not open file: ${error}`);
+      }
     }
+  };
 
-    const content = await invoke<string>("read_file_content", { path });
+  const onTabSelect = async (id: string) => {
+    const requestId = ++fileRequestRef.current;
 
-    setCode(content);
-    setCurrentFilePath(path);
+    if (id === currentFilePath) return;
+
+    const targetTab = openTabs.find(
+      (tab) => tab.id === id
+    );
+
+    if (!targetTab) return;
+
+    try {
+      await saveCurrentFile();
+
+      if (requestId !== fileRequestRef.current) return;
+
+      setCurrentFilePath(targetTab.id);
+      setCode(targetTab.content);
+    } catch (error) {
+      toast.error(`Could not switch files: ${error}`);
+    }
+  };
+
+  const onTabClose = async (id: string) => {
+    const tabIndex = openTabs.findIndex(
+      (tab) => tab.id === id
+    );
+
+    const tabToClose = openTabs[tabIndex];
+
+    if (!tabToClose) return;
+
+    try {
+      const content = id === currentFilePath
+        ? code
+        : tabToClose.content;
+
+      await saveFileContent(id, content);
+
+      const remainingTabs = openTabs.filter(
+        (tab) => tab.id !== id
+      );
+
+      setOpenTabs(remainingTabs);
+
+      if (id === currentFilePath) {
+        const nextTab = remainingTabs[tabIndex] ??
+          remainingTabs[tabIndex - 1] ??
+          null;
+
+        setCurrentFilePath(nextTab?.id ?? "");
+        setCode(nextTab?.content ?? "");
+      }
+    } catch (error) {
+      toast.error(`Could not close file: ${error}`);
+    }
+  };
+
+  const handleCodeChange = (newCode: string) => {
+    setCode(newCode);
+
+    setOpenTabs((previous) =>
+      previous.map((tab) =>
+        tab.id === currentFilePath
+          ? {
+            ...tab,
+            content: newCode,
+            isDirty: true,
+          }
+          : tab
+      )
+    );
   };
 
   useEffect(() => {
-    if (!currentFilePath) {
-      return;
-    }
+    if (!currentFilePath) return;
+
+    const activeTab = openTabs.find(
+      (tab) => tab.id === currentFilePath
+    );
+
+    if (!activeTab?.isDirty) return;
+
+    const path = currentFilePath;
+    const content = code;
 
     const timeoutId = setTimeout(() => {
-      invoke("save_file_content", { path: currentFilePath, content: code });
+      saveFileContent(path, content)
+        .then(() => {
+          setOpenTabs((previous) =>
+            previous.map((tab) =>
+              tab.id === path && tab.content === content
+                ? { ...tab, isDirty: false }
+                : tab
+            )
+          );
+        })
+        .catch((error: unknown) => {
+          toast.error(`Auto-save failed: ${error}`);
+        });
     }, 100);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [code, currentFilePath]);
+  }, [code, currentFilePath, openTabs, saveFileContent]);
 
   useEffect(() => {
     let isActive = true;
@@ -99,11 +283,11 @@ function App() {
     }
 
     try {
-      await invoke("save_file_content", { path: currentFilePath, content: code });
+      await saveCurrentFile();
 
       await invoke<CompileResult>("verify_code", {
         sourcePath: currentFilePath,
-        board: board
+        board: board,
       });
 
       toast.success("Verified", { id: onVerifyToast });
@@ -128,16 +312,16 @@ function App() {
     }
 
     try {
-      await invoke("save_file_content", { path: currentFilePath, content: code });
+      await saveCurrentFile();
 
       await invoke<CompileResult>("upload_code", {
         sourcePath: currentFilePath,
-        board: board
+        board: board,
       });
 
       toast.success("Uploaded", { id: onUploadToast });
 
-      setTimeout(() => {}, 1500);
+      setTimeout(() => { }, 1500);
 
       setTerminalActive(false);
 
@@ -193,18 +377,26 @@ function App() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-                  className="absolute inset-0"
+                  className="absolute inset-0 flex flex-col"
                 >
-                  <CodeEditor
-                    key="editor"
-                    code={code}
-                    useMinimap={useMinimap}
-                    onChange={setCode}
-                    fontFamily={fontFamily}
-                    fontSize={fontSize}
-                    lineHeight={lineHeight}
-                    theme={theme}
+                  <Tabbar
+                    tabs={openTabs}
+                    activeTabId={currentFilePath}
+                    onTabSelect={onTabSelect}
+                    onTabClose={onTabClose}
                   />
+
+                  <div className="flex-1 min-h-0 overflow-hidden">
+                    <CodeEditor
+                      code={code}
+                      useMinimap={useMinimap}
+                      onChange={handleCodeChange}
+                      fontFamily={fontFamily}
+                      fontSize={fontSize}
+                      lineHeight={lineHeight}
+                      theme={theme}
+                    />
+                  </div>
                 </motion.div>
               </AnimatePresence>
             ) : (
@@ -217,40 +409,14 @@ function App() {
                 className="flex flex-col h-full w-full items-center justify-center gap-2 text-neutral-600 text-sm"
               >
                 <div className="flex flex-col w-full items-center gap-2">
-                  <span className="text-neutral-400">No folder or file open</span>
+                  <LuFolders size={150} />
+
+                  <span className="text-neutral-400">No folder or file opene</span>
+
                   <div className="flex items-center gap-1">
                     <span className="text-xs text-neutral-600">Open a folder and select a file to start coding with</span>
-
-                    <TypeAnimation
-                      sequence={[
-                        "Mello", 1500,
-                        "Arduino", 1500,
-                        "Speed", 1500,
-                        "Performance", 1500,
-                      ]}
-
-                      wrapper="span"
-                      speed={30}
-                      repeat={Infinity}
-                      cursor
-                      className="text-violet-400"
-                    />
+                    <span className="text-violet-400">Mello</span>
                   </div>
-                </div>
-
-                <div className="flex flex-col absolute w-full items-center bottom-0 mb-2">
-                  <TypeAnimation
-                    sequence={[
-                      "I was listening to 'This is me trying' by Taylor Swift", 1500,
-                      "and 'Ocean Eyes' by Billie Eilish", 1500,
-                      "when I did this", 1500,
-                    ]}
-
-                    wrapper="span"
-                    speed={60}
-                    repeat={Infinity}
-                    cursor
-                  />
                 </div>
               </motion.div>
             )}
