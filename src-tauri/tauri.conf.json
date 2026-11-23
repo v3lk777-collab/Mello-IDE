@@ -46,8 +46,8 @@
   
     "resources": [
       "mello/build/mello.exe",
-      "mello/stdlib/**/*",
-      "mello/libs/**/*",
+      "mello/stdlib/",
+      "mello/libs/",
       "mello/bin/win32/arduino-cli.exe",
       "mello/bin/win32/clang-format.exe"
     ],

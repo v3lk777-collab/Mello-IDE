@@ -27,6 +27,7 @@ pub struct CompileResult {
 
 fn run_mello(app: &AppHandle, source_path: &str, board: &str, upload: bool) -> Result<CompileResult, String> {
     let compiler_path = resolve_compiler_path(app)?;
+
     let compiler_dir = compiler_path
         .parent()
         .ok_or("Could not determine compiler directory")?;

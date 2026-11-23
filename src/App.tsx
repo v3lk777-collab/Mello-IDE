@@ -285,10 +285,16 @@ function App() {
     try {
       await saveCurrentFile();
 
-      await invoke<CompileResult>("verify_code", {
+      const result = await invoke<CompileResult>("verify_code", {
         sourcePath: currentFilePath,
-        board: board,
+        board: board
       });
+
+      if (!result.success) {
+        toast.error("Verification failed. Check terminal output.", { id: onVerifyToast });
+
+        return;
+      }
 
       toast.success("Verified", { id: onVerifyToast });
     } catch (e) {
@@ -314,14 +320,20 @@ function App() {
     try {
       await saveCurrentFile();
 
-      await invoke<CompileResult>("upload_code", {
+      const result = await invoke<CompileResult>("upload_code", {
         sourcePath: currentFilePath,
-        board: board,
+        board: board
       });
 
-      toast.success("Uploaded", { id: onUploadToast });
+      if (!result.success) {
+        toast.error("Verification failed. Check terminal output.", { id: onUploadToast });
 
-      setTimeout(() => { }, 1500);
+        return;
+      }
+
+      toast.success("Verified", { id: onUploadToast });
+
+      setTimeout(() => { }, 2000);
 
       setTerminalActive(false);
 
