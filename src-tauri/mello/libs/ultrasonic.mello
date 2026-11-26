@@ -29,13 +29,17 @@ class Ultrasonic:
         return (float(duration) * 0.0343) / 2.0
 
     fn distance_inch(self) -> float:
-        if self.distance_cm() < 0.0:
+        distance = self.distance_cm()
+
+        if distance < 0.0:
             return -1.0
 
-        return self.distance_cm() / 2.54
+        return distance / 2.54
 
     fn is_closer_than(self, limit_cm) -> bool:
-        if self.distance_cm() < 0.0:
+        distance = self.distance_cm()
+
+        if distance < 0.0:
             return false
 
-        return self.distance_cm() <= float(limit_cm)
+        return distance <= float(limit_cm)

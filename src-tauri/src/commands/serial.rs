@@ -8,18 +8,14 @@ use tauri::{AppHandle, Emitter, State};
 #[tauri::command]
 pub fn list_ports() -> Result<Vec<String>, String> {
     let ports = serialport::available_ports().map_err(|e| e.to_string())?;
+
     Ok(ports.into_iter().map(|p| p.port_name).collect())
 }
 
 #[tauri::command]
-pub fn open_serial(
-    port: String,
-    baud: u32,
-    app: AppHandle,
-    state: State<SerialState>,
-) -> Result<(), String> {
+pub fn open_serial(port: String, baud: u32, app: AppHandle, state: State<SerialState>) -> Result<(), String> {
     let serial = serialport::new(&port, baud)
-        .timeout(Duration::from_millis(200))
+        .timeout(Duration::from_millis(20))
         .open()
         .map_err(|e| e.to_string())?;
 
@@ -29,9 +25,11 @@ pub fn open_serial(
 
     {
         let mut guard = state.0.lock().map_err(|e| e.to_string())?;
+
         if let Some(previous) = guard.take() {
             previous.stop_reader.store(true, Ordering::Relaxed);
         }
+
         *guard = Some(OpenSerial { port: serial, stop_reader });
     }
 
@@ -90,17 +88,23 @@ pub fn open_serial(
 #[tauri::command]
 pub fn close_serial(state: State<SerialState>) -> Result<(), String> {
     let mut guard = state.0.lock().map_err(|e| e.to_string())?;
+
     if let Some(previous) = guard.take() {
         previous.stop_reader.store(true, Ordering::Relaxed);
+        drop(guard);
+        std::thread::sleep(Duration::from_millis(30));
     }
+
     Ok(())
 }
 
 #[tauri::command]
 pub fn send_serial(message: String, state: State<SerialState>) -> Result<(), String> {
     let mut guard = state.0.lock().map_err(|e| e.to_string())?;
+
     if let Some(open) = guard.as_mut() {
         open.port.write_all(message.as_bytes()).map_err(|e| e.to_string())?;
+
         Ok(())
     } else {
         Err("Serial port not open".into())

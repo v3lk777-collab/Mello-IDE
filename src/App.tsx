@@ -333,7 +333,7 @@ function App() {
 
       toast.success("Verified", { id: onUploadToast });
 
-      setTimeout(() => { }, 2000);
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       setTerminalActive(false);
 
