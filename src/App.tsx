@@ -9,12 +9,15 @@ import { useLocalStorage } from "./hooks/useLocalStorage";
 import { toast } from "sonner";
 import { LuFolders } from "react-icons/lu";
 
-import Tabbar, { type EditorTab } from "./components/Tabbar";
 import Sidebar from "./components/Sidebar";
 import Terminal from "./components/Terminal";
 import Titlebar from "./components/Titlebar";
 import CodeEditor from "./components/CodeEditor";
 import SerialMonitor from "./components/SerialMonitor";
+import Tabbar, { type EditorTab } from "./components/Tabbar";
+
+import { check } from "@tauri-apps/plugin-updater";
+import { relaunch } from "@tauri-apps/plugin-process";
 
 interface CompileResult {
   success: boolean;
@@ -46,6 +49,28 @@ function App() {
 
   const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
   const fileRequestRef = useRef<number>(0);
+
+  const checkForUpdates = async () => {
+    try {
+      const update = await check();
+
+      if (update) {
+        toast.info(`New update available (${update.version})! Downloading...`);
+
+        await update.downloadAndInstall();
+        
+        toast.success('Update installed successfully! Restarting...');
+
+        await relaunch();
+      }
+    } catch (error) {
+      console.error('Failed to check for updates:', error);
+    }
+  };
+
+  useEffect(() => {
+    checkForUpdates();
+  }, []);
 
   const saveFileContent = useCallback(
     (path: string, content: string): Promise<void> => {
@@ -83,9 +108,7 @@ function App() {
 
     try {
       for (const tab of openTabs) {
-        const content = tab.id === currentFilePath
-          ? code
-          : tab.content;
+        const content = tab.id === currentFilePath ? code : tab.content;
 
         await saveFileContent(tab.id, content);
       }
@@ -176,9 +199,7 @@ function App() {
     if (!tabToClose) return;
 
     try {
-      const content = id === currentFilePath
-        ? code
-        : tabToClose.content;
+      const content = id === currentFilePath ? code : tabToClose.content;
 
       await saveFileContent(id, content);
 
@@ -189,9 +210,7 @@ function App() {
       setOpenTabs(remainingTabs);
 
       if (id === currentFilePath) {
-        const nextTab = remainingTabs[tabIndex] ??
-          remainingTabs[tabIndex - 1] ??
-          null;
+        const nextTab = remainingTabs[tabIndex] ?? remainingTabs[tabIndex - 1] ?? null;
 
         setCurrentFilePath(nextTab?.id ?? "");
         setCode(nextTab?.content ?? "");
@@ -205,15 +224,7 @@ function App() {
     setCode(newCode);
 
     setOpenTabs((previous) =>
-      previous.map((tab) =>
-        tab.id === currentFilePath
-          ? {
-            ...tab,
-            content: newCode,
-            isDirty: true,
-          }
-          : tab
-      )
+      previous.map((tab) => tab.id === currentFilePath ? { ...tab, content: newCode, isDirty: true } : tab)
     );
   };
 

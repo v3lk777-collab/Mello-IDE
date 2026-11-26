@@ -1,14 +1,16 @@
 mod commands;
 mod state;
 
+use state::{ProjectState, SerialState};
 use std::sync::Mutex;
-use state::{SerialState, ProjectState};
 
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
-        .plugin(tauri_plugin_opener::init()) 
+        .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .manage(SerialState(Mutex::new(None)))
         .manage(ProjectState(Mutex::new(None)))
         .invoke_handler(tauri::generate_handler![

@@ -43,7 +43,10 @@ pub fn initialize_project(path: String, state: State<ProjectState>) -> Result<()
 }
 
 #[tauri::command]
-pub fn get_directory_files(path: String, state: State<ProjectState>) -> Result<Vec<FileItem>, String> {
+pub fn get_directory_files(
+    path: String,
+    state: State<ProjectState>,
+) -> Result<Vec<FileItem>, String> {
     ensure_within_project(&path, &state)?;
 
     let entries = fs::read_dir(&path).map_err(|e| e.to_string())?;
@@ -77,7 +80,11 @@ pub fn read_file_content(path: String, state: State<ProjectState>) -> Result<Str
 }
 
 #[tauri::command]
-pub fn save_file_content(path: String, content: String, state: State<ProjectState>) -> Result<(), String> {
+pub fn save_file_content(
+    path: String,
+    content: String,
+    state: State<ProjectState>,
+) -> Result<(), String> {
     ensure_within_project(&path, &state)?;
     fs::write(&path, content).map_err(|e| e.to_string())
 }

@@ -13,7 +13,12 @@ pub fn list_ports() -> Result<Vec<String>, String> {
 }
 
 #[tauri::command]
-pub fn open_serial(port: String, baud: u32, app: AppHandle, state: State<SerialState>) -> Result<(), String> {
+pub fn open_serial(
+    port: String,
+    baud: u32,
+    app: AppHandle,
+    state: State<SerialState>,
+) -> Result<(), String> {
     let serial = serialport::new(&port, baud)
         .timeout(Duration::from_millis(20))
         .open()
@@ -30,7 +35,10 @@ pub fn open_serial(port: String, baud: u32, app: AppHandle, state: State<SerialS
             previous.stop_reader.store(true, Ordering::Relaxed);
         }
 
-        *guard = Some(OpenSerial { port: serial, stop_reader });
+        *guard = Some(OpenSerial {
+            port: serial,
+            stop_reader,
+        });
     }
 
     std::thread::spawn(move || {
@@ -55,7 +63,6 @@ pub fn open_serial(port: String, baud: u32, app: AppHandle, state: State<SerialS
                             return;
                         }
 
-
                         pending.drain(..=pos);
                     }
                 }
@@ -63,7 +70,10 @@ pub fn open_serial(port: String, baud: u32, app: AppHandle, state: State<SerialS
 
                 Err(ref e) if e.kind() == std::io::ErrorKind::TimedOut => {
                     if !pending.is_empty() && last_data_at.elapsed() >= Duration::from_millis(300) {
-                        if app.emit("serial_data", pending.trim_end_matches('\r').to_string()).is_err() {
+                        if app
+                            .emit("serial_data", pending.trim_end_matches('\r').to_string())
+                            .is_err()
+                        {
                             return;
                         }
 
@@ -103,7 +113,9 @@ pub fn send_serial(message: String, state: State<SerialState>) -> Result<(), Str
     let mut guard = state.0.lock().map_err(|e| e.to_string())?;
 
     if let Some(open) = guard.as_mut() {
-        open.port.write_all(message.as_bytes()).map_err(|e| e.to_string())?;
+        open.port
+            .write_all(message.as_bytes())
+            .map_err(|e| e.to_string())?;
 
         Ok(())
     } else {

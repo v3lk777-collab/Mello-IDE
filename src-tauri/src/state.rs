@@ -1,6 +1,6 @@
+use std::path::PathBuf;
 use std::sync::atomic::AtomicBool;
 use std::sync::{Arc, Mutex};
-use std::path::PathBuf;
 
 pub struct OpenSerial {
     pub port: Box<dyn serialport::SerialPort>,
